@@ -65,6 +65,7 @@ void AddSC_wp_commandscript();
 void AddSC_gps_commandscript();
 
 #ifdef SCRIPTS
+
 //world
 void AddSC_areatrigger_scripts();
 void AddSC_emerald_dragons();
@@ -1232,6 +1233,9 @@ void AddCustomScripts()
 {
 #ifdef SCRIPTS
     /* This is where custom scripts should be added. */
+	
+    //TeleNPC2
+    AddSC_npc_teleport();
 
 #endif
 }
