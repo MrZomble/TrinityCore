@@ -51,6 +51,15 @@ void WorldSession::HandleDuelAcceptedOpcode(WorldPacket& recvPacket)
 
     pl->SendDuelCountdown(3000);
     plTarget->SendDuelCountdown(3000);
+	if(pl->GetAreaId() == 2251 ) //dueling zone
+	{
+		pl->RemoveAllSpellCooldown();
+		pl->SetHealth( pl->GetMaxHealth() );
+		pl->SetPower(POWER_MANA, pl->GetMaxPower(POWER_MANA) );
+		plTarget->RemoveAllSpellCooldown();
+		plTarget->SetHealth( plTarget->GetMaxHealth() );
+		plTarget->SetPower(POWER_MANA, plTarget->GetMaxPower(POWER_MANA) );
+	}
 }
 
 void WorldSession::HandleDuelCancelledOpcode(WorldPacket& recvPacket)
