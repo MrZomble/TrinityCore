@@ -5090,6 +5090,9 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
     SetMovement(MOVE_UNROOT);
 
     m_deathTimer = 0;
+			
+	//cast honorless target
+	CastSpell(this, 2479, true);
 
     // set health/powers (0- will be set in caller)
     if (restore_percent > 0.0f)
@@ -5128,7 +5131,7 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
     {
         // set resurrection sickness
         CastSpell(this, 15007, true);
-
+		
         // not full duration
         if (int32(getLevel()) < startLevel+9)
         {
@@ -7387,7 +7390,7 @@ void Player::UpdateArea(uint32 newArea)
 
     // previously this was in UpdateZone (but after UpdateArea) so nothing will break
     pvpInfo.inNoPvPArea = false;
-    if (area && area->IsSanctuary() || (GetAreaId() == 2251) )    // in sanctuary or 
+    if ((area && area->IsSanctuary()) || (GetAreaId() == 2251) )    // in sanctuary or 
     {
         SetByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY);
         pvpInfo.inNoPvPArea = true;
@@ -22457,6 +22460,9 @@ void Player::ResurectUsingRequestData()
     SetPower(POWER_ENERGY, GetMaxPower(POWER_ENERGY));
 
     SpawnCorpseBones();
+	
+	//cast honorless target
+	CastSpell(this, 2479, true);
 }
 
 void Player::SetClientControl(Unit* target, uint8 allowMove)
