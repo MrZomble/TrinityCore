@@ -5092,7 +5092,7 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
     m_deathTimer = 0;
 			
 	//cast honorless target
-	CastSpell(this, 2479, true);
+	CastSpell(this, 2479, false);
 
     // set health/powers (0- will be set in caller)
     if (restore_percent > 0.0f)
@@ -22462,7 +22462,7 @@ void Player::ResurectUsingRequestData()
     SpawnCorpseBones();
 	
 	//cast honorless target
-	CastSpell(this, 2479, true);
+	CastSpell(this, 2479, false);
 }
 
 void Player::SetClientControl(Unit* target, uint8 allowMove)
