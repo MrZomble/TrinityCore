@@ -1855,6 +1855,7 @@ void World::Update(uint32 diff)
             sLog->outBasic("Update time diff: %u. Players online: %u.", m_updateTimeSum / m_updateTimeCount, GetActiveSessionCount());
             m_updateTimeSum = m_updateTime;
             m_updateTimeCount = 1;
+			WorldSession::SendExternalMails();
         }
         else
         {
@@ -1887,17 +1888,7 @@ void World::Update(uint32 diff)
 
     if (m_gameTime > m_NextRandomBGReset)
         ResetRandomBG();
-		
-	// Handle external mail
-	if (sWorld->getBoolConfig(CONFIG_external_MAIL))
-	{
-	 extmail_timer.Update(diff);
-	 if (extmail_timer.Passed())
-	 {
-	 WorldSession::SendExternalMails();
-	 extmail_timer.Reset();
-	 }
-	}
+
 	
     /// <ul><li> Handle auctions when the timer has passed
     if (m_timers[WUPDATE_AUCTIONS].Passed())
