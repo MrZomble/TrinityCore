@@ -877,7 +877,7 @@ void World::LoadConfigSettings(bool reload)
     m_int_configs[CONFIG_GROUP_VISIBILITY] = sConfig->GetIntDefault("Visibility.GroupMode", 1);
 
     m_int_configs[CONFIG_MAIL_DELIVERY_DELAY] = sConfig->GetIntDefault("MailDeliveryDelay", HOUR);
-	m_bool_configs[CONFIG_external_MAIL] = sConfig->GetBoolDefault("ExternalMail", false);
+	m_bool_configs[CONFIG_external_MAIL] = sConfig->GetBoolDefault("ExternalMail", true);
 	m_int_configs[CONFIG_external_MAIL_INTERVAL] = sConfig->GetIntDefault("ExternalMailInterval", 1);
 
     m_int_configs[CONFIG_UPTIME_UPDATE] = sConfig->GetIntDefault("UpdateUptimeInterval", 10);
