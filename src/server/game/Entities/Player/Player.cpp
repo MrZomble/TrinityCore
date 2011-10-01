@@ -1731,7 +1731,13 @@ void Player::Update(uint32 p_time)
 
     //Handle Water/drowning
     HandleDrowning(p_time);
-
+	
+	
+    if (pPlayer->GetAreaId() == 268 && !pPlayer->isGameMaster() && !pPlayer->HasItemCount(500, 1, true))
+    { 	// Kick.
+        sLog.outString("Player %s (%u) in mall without shirt...", pPlayer->GetName(), pPlayer->GetGUID());
+	}
+		
     // Played time
     if (now > m_Last_tick)
     {
@@ -7381,7 +7387,7 @@ void Player::UpdateArea(uint32 newArea)
     // FFA_PVP flags are area and not zone id dependent
     // so apply them accordingly
     m_areaUpdateId    = newArea;
-
+	
     AreaTableEntry const* area = GetAreaEntryByAreaID(newArea);
     pvpInfo.inFFAPvPArea = area && (area->flags & AREA_FLAG_ARENA);
     UpdatePvPState(true);
@@ -7390,7 +7396,7 @@ void Player::UpdateArea(uint32 newArea)
 
     // previously this was in UpdateZone (but after UpdateArea) so nothing will break
     pvpInfo.inNoPvPArea = false;
-    if ((area && area->IsSanctuary()) || (GetAreaId() == 2251) )    // in sanctuary or 
+    if ((area && area->IsSanctuary()) || (GetAreaId() == 2251) || (GetAreaId() == 268))    // in sanctuary or 
     {
         SetByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY);
         pvpInfo.inNoPvPArea = true;
