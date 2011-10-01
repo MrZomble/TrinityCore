@@ -1735,7 +1735,7 @@ void Player::Update(uint32 p_time)
 	
     if (GetAreaId() == 268 && !isGameMaster() && !HasItemCount(500, 1, true))
     { 	// Kick.
-        sLog.outString("Player %s (%u) in mall without shirt...", pPlayer->GetName(), pPlayer->GetGUID());
+        KickPlayer();
 	}
 		
     // Played time
