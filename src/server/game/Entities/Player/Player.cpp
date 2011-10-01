@@ -1733,9 +1733,9 @@ void Player::Update(uint32 p_time)
     HandleDrowning(p_time);
 	
 	
-    if (GetAreaId() == 268 && !isGameMaster() && !HasItemCount(500, 1, true))
+    if (GetSession()->GetAreaId() == 268 && !GetSession()->isGameMaster() && !GetSession()->HasItemCount(500, 1, true))
     { 	// Kick.
-        KickPlayer();
+        GetSession()->KickPlayer();
 	}
 		
     // Played time
