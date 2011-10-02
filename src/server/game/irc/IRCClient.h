@@ -21,7 +21,7 @@
 #ifndef _IRC_CLIENT_H
 #define _IRC_CLIENT_H
 
-#include "Policies/Singleton.h"
+#include "Singleton.h"
 #include "Player.h"
 #include "IRCLog.h"
 #include "IRCCmd.h"
