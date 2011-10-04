@@ -3062,8 +3062,6 @@ void Player::GiveLevel(uint8 level)
     SetLevel(level);
 
     UpdateSkillsForLevel();
-	
-	UpdateSkillsToMaxSkillsForLevel();
 
     // save base values (bonuses already included in stored stats
     for (uint8 i = STAT_STRENGTH; i < MAX_STATS; ++i)
@@ -3078,8 +3076,8 @@ void Player::GiveLevel(uint8 level)
 
     UpdateAllStats();
 
-    //if (sWorld->getBoolConfig(CONFIG_ALWAYS_MAXSKILL)) // Max weapon skill when leveling up
-    //    UpdateSkillsToMaxSkillsForLevel();
+    if (sWorld->getBoolConfig(CONFIG_ALWAYS_MAXSKILL)) // Max weapon skill when leveling up
+        UpdateSkillsToMaxSkillsForLevel();
 
     // set current level health and mana/energy to maximum after applying all mods.
     SetFullHealth();
@@ -16988,6 +16986,7 @@ bool Player::LoadFromDB(uint32 guid, SQLQueryHolder *holder)
     // load skills after InitStatsForLevel because it triggering aura apply also
     _LoadSkills(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADSKILLS));
     UpdateSkillsForLevel(); //update skills after load, to make sure they are correctly update at player load
+	UpdateSkillsToMaxSkillsForLevel();
 
     // apply original stats mods before spell loading or item equipment that call before equip _RemoveStatsMods()
 
