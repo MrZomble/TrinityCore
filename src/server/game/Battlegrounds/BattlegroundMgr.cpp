@@ -1103,13 +1103,14 @@ HolidayIds BattlegroundMgr::BGTypeToWeekendHolidayId(BattlegroundTypeId bgTypeId
 {
     switch (bgTypeId)
     {
-        case BATTLEGROUND_AV: return HOLIDAY_CALL_TO_ARMS_AV;
-        case BATTLEGROUND_EY: return HOLIDAY_CALL_TO_ARMS_EY;
+        case BATTLEGROUND_WS: return HOLIDAY_CALL_TO_ARMS_AV;
+        case BATTLEGROUND_WS: return HOLIDAY_CALL_TO_ARMS_EY;
         case BATTLEGROUND_WS: return HOLIDAY_CALL_TO_ARMS_WS;
-        case BATTLEGROUND_SA: return HOLIDAY_CALL_TO_ARMS_SA;
-        case BATTLEGROUND_AB: return HOLIDAY_CALL_TO_ARMS_AB;
-        case BATTLEGROUND_IC: return HOLIDAY_CALL_TO_ARMS_IC;
-        default: return HOLIDAY_NONE;
+        case BATTLEGROUND_WS: return HOLIDAY_CALL_TO_ARMS_SA;
+        case BATTLEGROUND_WS: return HOLIDAY_CALL_TO_ARMS_AB;
+        case BATTLEGROUND_WS: return HOLIDAY_CALL_TO_ARMS_IC;
+        //default: return HOLIDAY_NONE;
+		default: return HOLIDAY_CALL_TO_ARMS_AB;
     }
 }
 
