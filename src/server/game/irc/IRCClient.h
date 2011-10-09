@@ -65,7 +65,7 @@ class IRCClient
 {
     friend class ACE_Singleton<IRCClient, ACE_Null_Mutex>;
 
-    public:
+    private:
         // IRCClient Constructor
         IRCClient();
         // IRCClient Destructor
