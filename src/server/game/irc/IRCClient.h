@@ -21,7 +21,7 @@
 #ifndef _IRC_CLIENT_H
 #define _IRC_CLIENT_H
 
-#include "Singleton.h"
+#include <ace/Singleton.h>
 #include "Player.h"
 #include "IRCLog.h"
 #include "IRCCmd.h"
@@ -61,8 +61,10 @@ enum script_Names
 };
 
 // IRCClient main class
-class IRCClient : public ACE_Based::Runnable
+class IRCClient
 {
+    friend class ACE_Singleton<IRCClient, ACE_Null_Mutex>;
+
     public:
         // IRCClient Constructor
         IRCClient();
@@ -248,5 +250,7 @@ private:
         // Receieves data from the socket.
         void    SockRecv();
 };
+
+#define sIRC ACE_Singleton<IRCClient, ACE_Null_Mutex>::instance()
+
 #endif
-#define sIRC Trinity::Singleton<IRCClient>::Instance()

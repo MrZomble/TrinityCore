@@ -22,7 +22,7 @@
 #include "World.h"
 #include "ObjectMgr.h"
 #include "MapManager.h"
-
+/*
 #include "SingletonImp.h"
 INSTANTIATE_SINGLETON_1(IRCClient);
 
@@ -31,6 +31,7 @@ INSTANTIATE_SINGLETON_1(IRCClient);
 #else
     #define Delay(x) sleep(x / 1000)
 #endif
+*/
 // IRCClient Constructor
 IRCClient::IRCClient()
 {
