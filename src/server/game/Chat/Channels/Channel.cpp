@@ -23,7 +23,6 @@
 #include "World.h"
 #include "DatabaseEnv.h"
 #include "AccountMgr.h"
-#include "IRCClient.h"
 
 Channel::Channel(const std::string& name, uint32 channel_id, uint32 Team)
  : m_announce(true), m_ownership(true), m_name(name), m_password(""), m_flags(0), m_channelId(channel_id), m_ownerGUID(0), m_Team(Team)
@@ -200,8 +199,6 @@ void Channel::Join(uint64 p, const char *pass)
 
     MakeYouJoined(&data);
     SendToOne(&data, p);
-	
-	sIRC.Handle_WoW_Channel(m_name, objmgr.GetPlayer(p), CHANNEL_JOIN);
 
     JoinNotify(p);
 
@@ -255,8 +252,7 @@ void Channel::Leave(uint64 p, bool send)
             MakeLeft(&data, p);
             SendToAll(&data);
         }
-		
-		sIRC.Handle_WoW_Channel(m_name, objmgr.GetPlayer(p), CHANNEL_LEAVE);
+
         LeaveNotify(p);
 
         if (!IsConstant())

@@ -91,8 +91,6 @@ int cli_hook_func(void)
 
 #endif
 
-#include "../../game/irc/IRCClient.h"
-
 void utf8print(void* /*arg*/, const char* str)
 {
 #if PLATFORM == PLATFORM_WINDOWS
@@ -539,15 +537,6 @@ bool ChatHandler::HandleServerToggleQueryLogging(const char* /* args */)
     else
         PSendSysMessage(LANG_SQLDRIVER_QUERY_LOGGING_DISABLED);
 
-    return true;
-}
-
-//Reconnect TriniChat to IRC server via CLI command
-bool ChatHandler::HandleIRCRelogCommand(const char *args)
-{
-    SendSysMessage("TriniChat is dropping from IRC Server");
-    sIRC.ResetIRC();
-    SendSysMessage("TriniChat is reconnecting to IRC Server");
     return true;
 }
 

@@ -1103,13 +1103,14 @@ HolidayIds BattlegroundMgr::BGTypeToWeekendHolidayId(BattlegroundTypeId bgTypeId
 {
     switch (bgTypeId)
     {
-        case BATTLEGROUND_AV: return HOLIDAY_CALL_TO_ARMS_AV;
-        case BATTLEGROUND_EY: return HOLIDAY_CALL_TO_ARMS_EY;
+        case BATTLEGROUND_AV: return HOLIDAY_CALL_TO_ARMS_WS;
+        case BATTLEGROUND_EY: return HOLIDAY_CALL_TO_ARMS_WS;
         case BATTLEGROUND_WS: return HOLIDAY_CALL_TO_ARMS_WS;
-        case BATTLEGROUND_SA: return HOLIDAY_CALL_TO_ARMS_SA;
-        case BATTLEGROUND_AB: return HOLIDAY_CALL_TO_ARMS_AB;
-        case BATTLEGROUND_IC: return HOLIDAY_CALL_TO_ARMS_IC;
-        default: return HOLIDAY_NONE;
+        case BATTLEGROUND_SA: return HOLIDAY_CALL_TO_ARMS_WS;
+        case BATTLEGROUND_AB: return HOLIDAY_CALL_TO_ARMS_WS;
+        case BATTLEGROUND_IC: return HOLIDAY_CALL_TO_ARMS_WS;
+        //default: return HOLIDAY_NONE;
+		default: return HOLIDAY_CALL_TO_ARMS_AB;
     }
 }
 
@@ -1117,13 +1118,14 @@ BattlegroundTypeId BattlegroundMgr::WeekendHolidayIdToBGType(HolidayIds holiday)
 {
     switch (holiday)
     {
-        case HOLIDAY_CALL_TO_ARMS_AV: return BATTLEGROUND_AV;
-        case HOLIDAY_CALL_TO_ARMS_EY: return BATTLEGROUND_EY;
+        case HOLIDAY_CALL_TO_ARMS_AV: return BATTLEGROUND_WS;
+        case HOLIDAY_CALL_TO_ARMS_EY: return BATTLEGROUND_WS;
         case HOLIDAY_CALL_TO_ARMS_WS: return BATTLEGROUND_WS;
-        case HOLIDAY_CALL_TO_ARMS_SA: return BATTLEGROUND_SA;
-        case HOLIDAY_CALL_TO_ARMS_AB: return BATTLEGROUND_AB;
-        case HOLIDAY_CALL_TO_ARMS_IC: return BATTLEGROUND_IC;
-        default: return BATTLEGROUND_TYPE_NONE;
+        case HOLIDAY_CALL_TO_ARMS_SA: return BATTLEGROUND_WS;
+        case HOLIDAY_CALL_TO_ARMS_AB: return BATTLEGROUND_WS;
+        case HOLIDAY_CALL_TO_ARMS_IC: return BATTLEGROUND_WS;
+        //default: return BATTLEGROUND_TYPE_NONE;
+		default: return BATTLEGROUND_AB;
     }
 }
 

@@ -762,6 +762,16 @@ Player::Player (WorldSession* session): Unit(), m_achievementMgr(this), m_reputa
     rest_type=REST_TYPE_NO;
     ////////////////////Rest System/////////////////////
 
+    //movement anticheat
+    m_anti_LastLenCheck = getMSTime();
+    m_anti_MovedLen = 0.0f;
+    m_anti_BeginFallZ = INVALID_HEIGHT;
+    m_anti_lastalarmtime = 0;    //last time when alarm generated
+    m_anti_alarmcount = 0;       //alarm counter
+    m_anti_TeleTime = 0;
+    m_CanFly=false;
+    /////////////////////////////////
+
     m_mailsLoaded = false;
     m_mailsUpdated = false;
     unReadMails = 0;
@@ -2796,6 +2806,8 @@ void Player::SetInWater(bool apply)
     RemoveAurasWithInterruptFlags(apply ? AURA_INTERRUPT_FLAG_NOT_ABOVEWATER : AURA_INTERRUPT_FLAG_NOT_UNDERWATER);
 
     getHostileRefManager().updateThreatTables();
+    // movement anticheat
+    if (apply) m_anti_BeginFallZ=INVALID_HEIGHT;
 }
 
 void Player::SetGameMaster(bool on)
@@ -16974,6 +16986,7 @@ bool Player::LoadFromDB(uint32 guid, SQLQueryHolder *holder)
     // load skills after InitStatsForLevel because it triggering aura apply also
     _LoadSkills(holder->GetPreparedResult(PLAYER_LOGIN_QUERY_LOADSKILLS));
     UpdateSkillsForLevel(); //update skills after load, to make sure they are correctly update at player load
+	UpdateSkillsToMaxSkillsForLevel();
 
     // apply original stats mods before spell loading or item equipment that call before equip _RemoveStatsMods()
 
@@ -23487,6 +23500,15 @@ void Player::HandleFall(MovementInfo const& movementInfo)
     // calculate total z distance of the fall
     float z_diff = m_lastFallZ - movementInfo.pos.GetPositionZ();
     //sLog->outDebug("zDiff = %f", z_diff);
+
+    float anticheat_z_diff = m_anti_BeginFallZ-movementInfo.pos.GetPositionZ();
+    if (z_diff < anticheat_z_diff)
+    {
+        // sLog->outBasic("z_diff=%f, while anticheat_z_diff=%f ... possible cheat attempt by player %s(%d), account %u ?",
+        //                 z_diff,anticheat_z_diff,GetName(),GetGUIDLow(),GetSession()->GetAccountId());
+        z_diff = anticheat_z_diff;
+    }
+    m_anti_BeginFallZ=INVALID_HEIGHT;
 
     //Players with low fall distance, Feather Fall or physical immunity (charges used) are ignored
     // 14.57 can be calculated by resolving damageperc formula below to 0
