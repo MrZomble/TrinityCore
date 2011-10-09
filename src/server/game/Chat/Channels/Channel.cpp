@@ -201,7 +201,7 @@ void Channel::Join(uint64 p, const char *pass)
     MakeYouJoined(&data);
     SendToOne(&data, p);
 	
-	IRCClient::Handle_WoW_Channel(m_name, sObjectMgr->GetPlayer(p), CHANNEL_JOIN);
+	IRCClient::Handle_WoW_Channel(m_name, sObjectMgr->GetPlayerNameByGUID(m_ownerGUID, name), CHANNEL_JOIN);
 
     JoinNotify(p);
 
@@ -256,7 +256,7 @@ void Channel::Leave(uint64 p, bool send)
             SendToAll(&data);
         }
 		
-		sIRC.Handle_WoW_Channel(m_name, objmgr.GetPlayer(p), CHANNEL_LEAVE);
+		sIRC.Handle_WoW_Channel(m_name, sObjectMgr->GetPlayerNameByGUID(m_ownerGUID, name), CHANNEL_LEAVE);
         LeaveNotify(p);
 
         if (!IsConstant())
