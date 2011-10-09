@@ -25,7 +25,7 @@
 #include "Common.h"
 #include "Player.h"
 #include "ObjectAccessor.h"
-#include "BattleGroundMgr.h"
+//#include "BattleGroundMgr.h"
 
 struct ChannelUser
 {
