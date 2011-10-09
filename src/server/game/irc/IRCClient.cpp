@@ -23,7 +23,7 @@
 #include "ObjectMgr.h"
 #include "MapManager.h"
 
-#include "Policies/SingletonImp.h"
+#include "SingletonImp.h"
 INSTANTIATE_SINGLETON_1(IRCClient);
 
 #ifdef WIN32

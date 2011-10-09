@@ -27,6 +27,7 @@
 #include "Common.h"
 #include "Database/DatabaseEnv.h"
 #include "Configuration/Config.h"
+#include "../game/irc/IRCClient.h"
 
 #include "Log.h"
 #include "Master.h"

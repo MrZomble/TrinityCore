@@ -1459,7 +1459,7 @@ void Spell::EffectDummy(SpellEffIndex effIndex)
             {
                 if (m_caster->IsFriendlyTo(unitTarget))
                 {
-                    int32 bp = int32(damage * 2.5f);
+                    int32 bp = int32(damage * 1.5f);
                     m_caster->CastCustomSpell(unitTarget, 47633, &bp, NULL, NULL, true);
                 }
                 else
@@ -6196,9 +6196,6 @@ void Spell::EffectCharge(SpellEffIndex /*effIndex*/)
         // not all charge effects used in negative spells
         if (!m_spellInfo->IsPositive() && m_caster->GetTypeId() == TYPEID_PLAYER)
             m_caster->Attack(unitTarget, true);
-
-        if (m_caster->GetTypeId() == TYPEID_PLAYER)
-            static_cast<Player*>(m_caster)->m_anti_BeginFallZ=INVALID_HEIGHT;
     }
 }
 
