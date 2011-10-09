@@ -2871,9 +2871,16 @@ void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode
         // allow flying
         WorldPacket data;
         if (apply)
+        {
+            static_cast<Player*>(target)->SetCanFly(true);
+            static_cast<Player*>(target)->m_anti_BeginFallZ=INVALID_HEIGHT;
             data.Initialize(SMSG_MOVE_SET_CAN_FLY, 12);
+        }
         else
+        {
             data.Initialize(SMSG_MOVE_UNSET_CAN_FLY, 12);
+            static_cast<Player*>(target)->SetCanFly(false);
+        }
         data.append(target->GetPackGUID());
         data << uint32(0);                                      // unk
         plr->SendDirectMessage(&data);
@@ -2920,7 +2927,11 @@ void AuraEffect::HandleAuraFeatherFall(AuraApplication const* aurApp, uint8 mode
 
     WorldPacket data;
     if (apply)
+    {
         data.Initialize(SMSG_MOVE_FEATHER_FALL, 8+4);
+        if (target->GetTypeId() == TYPEID_PLAYER)
+            static_cast<Player*>(target)->m_anti_BeginFallZ=INVALID_HEIGHT;
+    }
     else
         data.Initialize(SMSG_MOVE_NORMAL_FALL, 8+4);
     data.append(target->GetPackGUID());
@@ -3269,9 +3280,15 @@ void AuraEffect::HandleAuraModIncreaseFlightSpeed(AuraApplication const* aurApp,
             {
                 WorldPacket data;
                 if (apply)
+                {
+                    static_cast<Player*>(target)->SetCanFly(true);
                     data.Initialize(SMSG_MOVE_SET_CAN_FLY, 12);
+                }
                 else
+                {
                     data.Initialize(SMSG_MOVE_UNSET_CAN_FLY, 12);
+                    static_cast<Player*>(target)->SetCanFly(false);
+                }
                 data.append(plr->GetPackGUID());
                 data << uint32(0);                                      // unknown
                 plr->SendDirectMessage(&data);
