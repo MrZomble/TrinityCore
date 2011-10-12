@@ -5768,14 +5768,20 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
             return GetDefaultGraveYard(team);
         }
     }
-			
+	
+	enum HillsbradGraveyard
+    {
+        HORDE_GRAVEYARD_HILLS = 98, // Crossroads
+        ALLIANCE_GRAVEYARD_HILLS = 149, // Westfall
+    };
+	
 	AreaTableEntry const* zone = GetAreaEntryByAreaID(team);	
 	if (zone->ID == 267)
 	{
 		if (team == HORDE)
-		return sWorldSafeLocsStore.LookupEntry(98);
+		return sWorldSafeLocsStore.LookupEntry(HORDE_GRAVEYARD_HILLS);
 	else if (team == ALLIANCE)
-		return sWorldSafeLocsStore.LookupEntry(149);
+		return sWorldSafeLocsStore.LookupEntry(ALLIANCE_GRAVEYARD_HILLS);
 	}	
 
 	
