@@ -5768,6 +5768,14 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
             return GetDefaultGraveYard(team);
         }
     }
+	
+	if (zoneID == 267)
+	{
+		if (team == HORDE)
+        return sWorldSafeLocsStore.LookupEntry(98);
+    else if (team == ALLIANCE)
+        return sWorldSafeLocsStore.LookupEntry(149);
+	}	
 
     // Simulate std. algorithm:
     //   found some graveyard associated to (ghost_zone, ghost_map)
