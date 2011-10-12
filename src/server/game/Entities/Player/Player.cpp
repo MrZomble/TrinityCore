@@ -5518,12 +5518,10 @@ void Player::RepopAtGraveyard()
     // note: this can be called also when the player is alive
     // for example from WorldSession::HandleMovementOpcodes
 
-    AreaTableEntry const* zone = GetAreaEntryByAreaID(GetAreaId());
-	AreaTableEntry const* world_pvp = GetAreaEntryByAreaID(GetZoneId());
-	
+    AreaTableEntry const* zone = GetAreaEntryByAreaID(GetAreaId());	
 
     // Such zones are considered unreachable as a ghost and the player must be automatically revived
-    if ((!isAlive() && zone && zone->flags & AREA_FLAG_NEED_FLY) || GetTransport() || GetPositionZ() < -500.0f || (world_pvp == 267) )
+    if ((!isAlive() && zone && zone->flags & AREA_FLAG_NEED_FLY) || GetTransport() || GetPositionZ() < -500.0f || (zone == 267) )
     {
         ResurrectPlayer(0.5f);
         SpawnCorpseBones();
