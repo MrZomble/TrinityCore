@@ -1758,10 +1758,10 @@ void Player::Update(uint32 p_time)
 		
     }
 	
-	if (m_Played_time[PLAYED_TIME_TOTAL] < 10 * MINUTE * IN_MILLISECONDS)
-	{ 
-		SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_1);
-	}
+	//if (m_Played_time[PLAYED_TIME_TOTAL] < 10 * MINUTE * IN_MILLISECONDS)
+	//{ 
+	//	SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_1);
+	//}
 
     if (m_drunk)
     {
