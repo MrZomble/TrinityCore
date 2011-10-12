@@ -1755,13 +1755,7 @@ void Player::Update(uint32 p_time)
         m_Played_time[PLAYED_TIME_TOTAL] += elapsed;        // Total played time
         m_Played_time[PLAYED_TIME_LEVEL] += elapsed;        // Level played time
         m_Last_tick = now;
-		
     }
-	
-	//if (m_Played_time[PLAYED_TIME_TOTAL] < 10 * MINUTE * IN_MILLISECONDS)
-	//{ 
-	//	SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_1);
-	//}
 
     if (m_drunk)
     {
@@ -5519,10 +5513,10 @@ void Player::RepopAtGraveyard()
     // note: this can be called also when the player is alive
     // for example from WorldSession::HandleMovementOpcodes
 
-    AreaTableEntry const* zone = GetAreaEntryByAreaID(GetAreaId());	
+    AreaTableEntry const* zone = GetAreaEntryByAreaID(GetAreaId());
 
     // Such zones are considered unreachable as a ghost and the player must be automatically revived
-    if ((!isAlive() && zone && zone->flags & AREA_FLAG_NEED_FLY) || GetTransport() || GetPositionZ() < -500.0f || (zone->ID == 267) )
+    if ((!isAlive() && zone && zone->flags & AREA_FLAG_NEED_FLY) || GetTransport() || GetPositionZ() < -500.0f)
     {
         ResurrectPlayer(0.5f);
         SpawnCorpseBones();

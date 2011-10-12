@@ -5768,23 +5768,7 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
             return GetDefaultGraveYard(team);
         }
     }
-	
-	enum HillsbradGraveyard
-    {
-        HORDE_GRAVEYARD_HILLS = 98, // Crossroads
-        ALLIANCE_GRAVEYARD_HILLS = 149, // Westfall
-    };
-	
-	AreaTableEntry const* zone = GetAreaEntryByAreaID(team);	
-	if (zone->ID == 267)
-	{
-		if (team == HORDE)
-		return sWorldSafeLocsStore.LookupEntry(HORDE_GRAVEYARD_HILLS);
-	else if (team == ALLIANCE)
-		return sWorldSafeLocsStore.LookupEntry(ALLIANCE_GRAVEYARD_HILLS);
-	}	
 
-	
     // Simulate std. algorithm:
     //   found some graveyard associated to (ghost_zone, ghost_map)
     //
