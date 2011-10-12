@@ -5519,7 +5519,7 @@ void Player::RepopAtGraveyard()
     // for example from WorldSession::HandleMovementOpcodes
 
     AreaTableEntry const* zone = GetAreaEntryByAreaID(GetAreaId());
-	AreaTableEntry const* world_pvp = GetAreaEntryByAreaID(newZone);
+	AreaTableEntry const* world_pvp = GetAreaEntryByAreaID(GetZoneId());
 	
 
     // Such zones are considered unreachable as a ghost and the player must be automatically revived
