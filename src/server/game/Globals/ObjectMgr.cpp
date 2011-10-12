@@ -5768,8 +5768,8 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
             return GetDefaultGraveYard(team);
         }
     }
-	
-	if (zoneID == 267)
+	AreaTableEntry const* zone = GetAreaEntryByAreaID(GetAreaId());	
+	if (zone->ID == 267)
 	{
 		if (team == HORDE)
         return sWorldSafeLocsStore.LookupEntry(98);
