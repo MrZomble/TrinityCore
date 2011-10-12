@@ -5768,7 +5768,7 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
             return GetDefaultGraveYard(team);
         }
     }
-	AreaTableEntry const* zone = GetAreaEntryByAreaID(GetAreaId());	
+	AreaTableEntry const* zone = GetAreaEntryByAreaID(zoneID);	
 	if (zone->ID == 267)
 	{
 		if (team == HORDE)
