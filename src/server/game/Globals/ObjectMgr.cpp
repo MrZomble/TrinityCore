@@ -5768,7 +5768,7 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
             return GetDefaultGraveYard(team);
         }
     }
-	
+	uint32 count = 0;
  do
     {
         ++count;
