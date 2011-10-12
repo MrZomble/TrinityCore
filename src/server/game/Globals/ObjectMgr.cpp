@@ -5768,15 +5768,26 @@ WorldSafeLocsEntry const* ObjectMgr::GetClosestGraveYard(float x, float y, float
             return GetDefaultGraveYard(team);
         }
     }
-	AreaTableEntry const* zone = GetAreaEntryByAreaID(zoneID);	
-	if (zone->ID == 267)
-	{
-		if (team == HORDE)
-        return sWorldSafeLocsStore.LookupEntry(98);
-    else if (team == ALLIANCE)
-        return sWorldSafeLocsStore.LookupEntry(149);
-	}	
+	
+ do
+    {
+        ++count;
 
+        Field* fields = result->Fetch();
+
+        uint32 safeLocId = fields[0].GetUInt32();
+        uint32 zoneId = fields[1].GetUInt32();
+		
+		AreaTableEntry const* zone = GetAreaEntryByAreaID(zoneID);	
+		if (zone->ID == 267)
+		{
+			if (team == HORDE)
+			return sWorldSafeLocsStore.LookupEntry(98);
+		else if (team == ALLIANCE)
+			return sWorldSafeLocsStore.LookupEntry(149);
+		}	
+	} while (result->NextRow());
+	
     // Simulate std. algorithm:
     //   found some graveyard associated to (ghost_zone, ghost_map)
     //
