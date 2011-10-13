@@ -129,7 +129,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
                 plr->ResurrectPlayer(1.0f, false);
                 plr->CastSpell(plr, 6962, true);
                 plr->CastSpell(plr, HS_SPELL_SPIRIT_HEAL_MANA, true);
-                sObjectAccessor.ConvertCorpseForPlayer(*itr);
+                sObjectAccessor->ConvertCorpseForPlayer(*itr);
             }
             m_ResurrectQueue.clear();
         }
