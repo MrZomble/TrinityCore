@@ -5,7 +5,7 @@
 #ifndef OUTDOOR_PVP_HS_
 #define OUTDOOR_PVP_HS_
 
-//#include "OutdoorPvPImpl.h"
+#include "OutdoorPvP.h"
 
 enum HS_Outdoor_Flag_SpellId
 {
@@ -49,14 +49,14 @@ enum OutdoorPvPHSTowerType
     HS_TOWER_NUM = 3
 };
 
-/* const go_type HSCapturePoints[HS_TOWER_NUM] =
+const go_type HSCapturePoints[HS_TOWER_NUM] =
 {
     {850000,0,-474.745361f,-1373.009399f,53.323555f,0.174533f,0.0f,0.0f,0.087156f,0.996195f},     // 0 - Lower
     {850001,0,-569.107239f,-1510.894653f,52.848061f,0.174533f,0.0f,0.0f,0.087156f,0.996195f},     // 1 - Lower East
     {850002,0,-450.357513f,-1480.748779f,92.521019f,0.174533f,0.0f,0.0f,0.087156f,0.996195f}     // 2 - Main
-}; */
+}; 
 
-/* const go_type HSChestPoints[10] = {
+const go_type HSChestPoints[10] = {
     {850015,0,-594.745361,-51.738495,45.944431,0.174533,0,0,0,0},      // 0 - Young Field
     {850015,0,-466.411224,-42.806705,54.477070,0.000000,0,0,0,0},      // 1 - Middle Field
     {850015,0,-422.661194,106.235573,54.188080,5.424229,0,0,0,0},      // 2 - Upper Field
@@ -67,9 +67,9 @@ enum OutdoorPvPHSTowerType
     {850015,0,-457.335114,92.229897,58.199024,4.366654,0,0,0,0},       // 7 - Cart
     {850015,0,-486.734344,119.628014,60.418327,3.231307,0,0,0,0},      // 8 - Inside Town Hall
     {850015,0,-337.863281,38.192230,55.173203,2.969530,0,0,0,0}       // 9 - Water Towers
-}; */
+}; 
 
-/* class OPvPCapturePointHS : public OPvPCapturePoint
+class OPvPCapturePointHS : public OPvPCapturePoint
 {
     public:
         OPvPCapturePointHS(OutdoorPvP * pvp, OutdoorPvPHSTowerType type);
@@ -87,12 +87,12 @@ enum OutdoorPvPHSTowerType
     private:
         OutdoorPvPHSTowerType m_TowerType;
         bool m_locked;
-}; */
+}; 
 
 class OutdoorPvPHS : public OutdoorPvP
 {
 
-    //friend class OPvPCapturePointHS;
+    friend class OPvPCapturePointHS;
 
     public:
         OutdoorPvPHS();
