@@ -41,7 +41,8 @@ enum HS_Creatures
 
 #define HS_ZONE          267
 
-enum OutdoorPvPHSTowerType{
+enum OutdoorPvPHSTowerType
+{
     HS_TOWER_LOWER = 0,
     HS_TOWER_LOWER_EAST = 1,
     HS_TOWER_MAIN = 2,
@@ -91,7 +92,7 @@ enum OutdoorPvPHSTowerType{
 class OutdoorPvPHS : public OutdoorPvP
 {
 
-    friend class OPvPCapturePointHS;
+    //friend class OPvPCapturePointHS;
 
     public:
         OutdoorPvPHS();
