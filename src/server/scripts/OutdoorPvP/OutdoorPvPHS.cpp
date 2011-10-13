@@ -83,7 +83,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
     m_LastResurrectTime += diff;
     if (m_LastResurrectTime >= HS_RESURRECTION_INTERVAL)
     {
-        sLog->outString("HillsbradMGR : Reviving...");
+        //sLog->outString("HillsbradMGR : Reviving...");
         if ( GetReviveQueueSize() )
         {
             sLog->outString("HillsbradMGR : Dead players in queue.");
