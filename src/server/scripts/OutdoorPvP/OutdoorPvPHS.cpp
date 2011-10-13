@@ -41,7 +41,7 @@ bool OutdoorPvPHS::SetupOutdoorPvP()
     m_TowerStateWest = 0;
     m_TowerStateMain = 0;
 
-    RegisterZone( HS_ZONE );
+    RegisterZone(HS_ZONE);
     
     AddCapturePoint(new OPvPCapturePointHS(this,HS_TOWER_LOWER));
 
@@ -92,7 +92,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
                 Creature *sh = NULL;
                 for (std::vector<uint64>::const_iterator itr2 = (itr->second).begin(); itr2 != (itr->second).end(); ++itr2)
                 {
-                    Player *plr = sObjectMgr->GetPlayerByLowGUID(*itr2);
+                    Player *plr = ObjectAccessor::FindPlayer(*itr2);
                     if (!plr)
                         continue;
 
@@ -123,7 +123,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
             sLog->outString("HillsbradMGR : Resurrecting...");
             for (std::vector<uint64>::const_iterator itr = m_ResurrectQueue.begin(); itr != m_ResurrectQueue.end(); ++itr)
             {
-                Player *plr = sObjectMgr->GetPlayerByLowGUID(*itr);
+                Player* plr = ObjectAccessor::FindPlayer(*itr);
                 if (!plr)
                     continue;
                 plr->ResurrectPlayer(1.0f, false);
@@ -352,7 +352,7 @@ void OutdoorPvPHS::AddPlayerToResurrectQueue(uint64 npc_guid, uint64 player_guid
 {
     m_ReviveQueue[npc_guid].push_back(player_guid);
 
-    Player *plr = sObjectMgr->GetPlayerByLowGUID(player_guid);
+    Player* plr = ObjectAccessor::FindPlayer(player_guid);
     if (!plr)
         return;
 
@@ -363,19 +363,13 @@ void OutdoorPvPHS::RemovePlayerFromResurrectQueue(uint64 player_guid)
 {
     for (std::map<uint64, std::vector<uint64> >::iterator itr = m_ReviveQueue.begin(); itr != m_ReviveQueue.end(); ++itr)
     {
-        for (std::vector<uint64>::iterator itr2 =(itr->second).begin(); itr2 != (itr->second).end(); ++itr2)
+        for (std::vector<uint64>::iterator itr2 = (itr->second).begin(); itr2 != (itr->second).end(); ++itr2)
         {
             if (*itr2 == player_guid)
             {
                 (itr->second).erase(itr2);
-
-                Player *plr = sObjectMgr->GetPlayerByLowGUID(player_guid);
-
-                if (!plr)
-                    return;
-
-                plr->RemoveAurasDueToSpell( HS_SPELL_WAITING_FOR_RESURRECT );
-
+                if (Player* plr = ObjectAccessor::FindPlayer(player_guid))
+                    plr->RemoveAurasDueToSpell(HS_SPELL_WAITING_FOR_RESURRECT);
                 return;
             }
         }
