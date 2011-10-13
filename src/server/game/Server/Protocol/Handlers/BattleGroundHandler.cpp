@@ -614,7 +614,7 @@ void WorldSession::HandleAreaSpiritHealerQueueOpcode(WorldPacket & recv_data)
 
     if (bg)
         bg->AddPlayerToResurrectQueue(guid, _player->GetGUID());
-	    else
+	else
     {
         if ( GetPlayer()->GetZoneId() == 267 )
         {
@@ -622,6 +622,7 @@ void WorldSession::HandleAreaSpiritHealerQueueOpcode(WorldPacket & recv_data)
             if (pvpHS)
                 pvpHS->AddPlayerToResurrectQueue( guid, _player->GetGUID() );
         }
+	}
 
 }
 
