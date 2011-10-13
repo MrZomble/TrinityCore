@@ -34,7 +34,7 @@
 #include "Opcodes.h"
 #include "OutdoorPvP.h"
 #include "OutdoorPvPMgr.h"
-#include "OutdoorPvPHS.h"
+#include "../../../../scripts/OutdoorPvP/OutdoorPvPHS.h"
 #include "DisableMgr.h"
 #include "Group.h"
 
