@@ -589,7 +589,7 @@ void WorldSession::HandleAreaSpiritHealerQueryOpcode(WorldPacket & recv_data)
     {
         if ( GetPlayer()->GetZoneId() == 267 )
         {
-            OutdoorPvPHS *pvpHS = (OutdoorPvPHS*)sOutdoorPvPMgr.GetOutdoorPvPToZoneId( 267 );
+            OutdoorPvPHS *pvpHS = (OutdoorPvPHS*)sOutdoorPvPMgr->GetOutdoorPvPToZoneId( 267 );
             if (pvpHS)
                 pvpHS->SendAreaSpiritHealerQueryOpcode(_player, guid);
         }
