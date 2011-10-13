@@ -92,7 +92,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
                 Creature *sh = NULL;
                 for (std::vector<uint64>::const_iterator itr2 = (itr->second).begin(); itr2 != (itr->second).end(); ++itr2)
                 {
-                    Player *plr = ObjectMgr::GetPlayerByLowGUID(*itr2);
+                    Player *plr = sObjectMgr->GetPlayerByLowGUID(*itr2);
                     if (!plr)
                         continue;
 
@@ -123,7 +123,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
             sLog->outString("HillsbradMGR : Resurrecting...");
             for (std::vector<uint64>::const_iterator itr = m_ResurrectQueue.begin(); itr != m_ResurrectQueue.end(); ++itr)
             {
-                Player *plr = ObjectMgr::GetPlayerByLowGUID(*itr);
+                Player *plr = sObjectMgr->GetPlayerByLowGUID(*itr);
                 if (!plr)
                     continue;
                 plr->ResurrectPlayer(1.0f, false);
@@ -143,7 +143,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
         {
             uint32 ffachest = 0;
             ffachest = urand(0, 9);
-            if( uint32 guid = ObjectMgr::AddGOData(HSChestPoints[ffachest].entry, HSChestPoints[ffachest].map, HSChestPoints[ffachest].x, HSChestPoints[ffachest].y, HSChestPoints[ffachest].z, HSChestPoints[ffachest].o, 99999999999, 0, 0, 0, 0) )
+            if( uint32 guid = sObjectMgr->AddGOData(HSChestPoints[ffachest].entry, HSChestPoints[ffachest].map, HSChestPoints[ffachest].x, HSChestPoints[ffachest].y, HSChestPoints[ffachest].z, HSChestPoints[ffachest].o, 99999999999, 0, 0, 0, 0) )
             {
                 sLog->outString( "Hillsbrad : Spawned Chest(%u) at location %u.", guid,  ffachest);
                 m_ChestGUID = guid;
@@ -351,7 +351,7 @@ void OutdoorPvPHS::AddPlayerToResurrectQueue(uint64 npc_guid, uint64 player_guid
 {
     m_ReviveQueue[npc_guid].push_back(player_guid);
 
-    Player *plr = ObjectMgr::GetPlayerByLowGUID(player_guid);
+    Player *plr = sObjectMgr->GetPlayerByLowGUID(player_guid);
     if (!plr)
         return;
 
@@ -368,7 +368,7 @@ void OutdoorPvPHS::RemovePlayerFromResurrectQueue(uint64 player_guid)
             {
                 (itr->second).erase(itr2);
 
-                Player *plr = ObjectMgr::GetPlayerByLowGUID(player_guid);
+                Player *plr = sObjectMgr->GetPlayerByLowGUID(player_guid);
 
                 if (!plr)
                     return;
