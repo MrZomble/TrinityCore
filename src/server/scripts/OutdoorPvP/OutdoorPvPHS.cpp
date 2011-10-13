@@ -89,10 +89,10 @@ bool OutdoorPvPHS::Update(uint32 diff)
             sLog->outString("HillsbradMGR : Dead players in queue.");
             for (std::map<uint64, std::vector<uint64> >::iterator itr = m_ReviveQueue.begin(); itr != m_ReviveQueue.end(); ++itr)
             {
-                Creature *sh = NULL;
+                Creature* sh = NULL;
                 for (std::vector<uint64>::const_iterator itr2 = (itr->second).begin(); itr2 != (itr->second).end(); ++itr2)
                 {
-                    Player *plr = ObjectAccessor::FindPlayer(*itr2);
+                    Player* plr = ObjectAccessor::FindPlayer(*itr2);
                     if (!plr)
                         continue;
 
