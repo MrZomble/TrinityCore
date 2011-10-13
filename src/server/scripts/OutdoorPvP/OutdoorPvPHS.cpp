@@ -299,12 +299,11 @@ bool OutdoorPvPHS::HandleOpenGo(Player *plr, uint64 guid)
                 // New player protection, fuck a new timer... WILL ADD WHEN REQUIRED.
                 if( plr->GetTotalPlayedTime() >= 300 )
                 {
-                    if ( plr->HasByteFlag( UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY ) )
-                        plr->RemoveByteFlag( UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY );
+                        plr->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 }
                 else
                 {
-                    plr->SetByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY);
+                    plr->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     plr->CombatStopWithPets();
                 }
             }
