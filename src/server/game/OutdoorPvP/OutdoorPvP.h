@@ -32,9 +32,10 @@ enum OutdoorPvPTypes
     OUTDOOR_PVP_ZM = 4,
     OUTDOOR_PVP_SI = 5,
     OUTDOOR_PVP_EP = 6,
+	OUTDOOR_PVP_HS = 7,
 };
 
-#define MAX_OUTDOORPVP_TYPES 7
+#define MAX_OUTDOORPVP_TYPES 8
 
 enum ObjectiveStates
 {
@@ -152,7 +153,7 @@ class OPvPCapturePoint
 
         bool DelCapturePoint();
 
-    protected:
+    public:
 
         // active players in the area of the objective, 0 - alliance, 1 - horde
         PlayerSet m_activePlayers[2];

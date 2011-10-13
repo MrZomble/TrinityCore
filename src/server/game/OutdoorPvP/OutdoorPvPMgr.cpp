@@ -108,6 +108,7 @@ void OutdoorPvPMgr::InitOutdoorPvP()
 
     sLog->outString(">> Loaded %u outdoor PvP definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
     sLog->outString();
+	
 }
 
 void OutdoorPvPMgr::AddZone(uint32 zoneid, OutdoorPvP* handle)
