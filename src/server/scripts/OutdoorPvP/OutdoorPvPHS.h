@@ -68,7 +68,7 @@ enum OutdoorPvPHSTowerType{
     {850015,0,-337.863281,38.192230,55.173203,2.969530,0,0,0,0}       // 9 - Water Towers
 }; */
 
-class OPvPCapturePointHS : public OPvPCapturePoint
+/* class OPvPCapturePointHS : public OPvPCapturePoint
 {
     public:
         OPvPCapturePointHS(OutdoorPvP * pvp, OutdoorPvPHSTowerType type);
@@ -86,7 +86,7 @@ class OPvPCapturePointHS : public OPvPCapturePoint
     private:
         OutdoorPvPHSTowerType m_TowerType;
         bool m_locked;
-};
+}; */
 
 class OutdoorPvPHS : public OutdoorPvP
 {
