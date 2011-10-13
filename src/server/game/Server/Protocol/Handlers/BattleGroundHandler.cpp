@@ -618,7 +618,7 @@ void WorldSession::HandleAreaSpiritHealerQueueOpcode(WorldPacket & recv_data)
     {
         if ( GetPlayer()->GetZoneId() == 267 )
         {
-            OutdoorPvPHS *pvpHS = (OutdoorPvPHS*)sOutdoorPvPMgr.GetOutdoorPvPToZoneId( 267 );
+            OutdoorPvPHS *pvpHS = (OutdoorPvPHS*)sOutdoorPvPMgr->GetOutdoorPvPToZoneId( 267 );
             if (pvpHS)
                 pvpHS->AddPlayerToResurrectQueue( guid, _player->GetGUID() );
         }
