@@ -49,14 +49,14 @@ bool OutdoorPvPHS::SetupOutdoorPvP()
 
     AddCapturePoint(new OPvPCapturePointHS(this,HS_TOWER_MAIN));
 
-    sLog.outString("HillsbradMGR : Loaded.");
+    sLog->outString("HillsbradMGR : Loaded.");
 
     return true;
 }
 
 void OutdoorPvPHS::FillInitialWorldStates(WorldPacket &data)
 {
-    sLog.outString("Send initial world states...");
+    sLog->outString("Send initial world states...");
     data << uint32(2473) << uint32(0);
     data << uint32(2474) << uint32(50);
     data << uint32(2475) << uint32(100);
@@ -83,10 +83,10 @@ bool OutdoorPvPHS::Update(uint32 diff)
     m_LastResurrectTime += diff;
     if (m_LastResurrectTime >= HS_RESURRECTION_INTERVAL)
     {
-        sLog.outString("HillsbradMGR : Reviving...");
+        sLog->outString("HillsbradMGR : Reviving...");
         if ( GetReviveQueueSize() )
         {
-            sLog.outString("HillsbradMGR : Dead players in queue.");
+            sLog->outString("HillsbradMGR : Dead players in queue.");
             for (std::map<uint64, std::vector<uint64> >::iterator itr = m_ReviveQueue.begin(); itr != m_ReviveQueue.end(); ++itr)
             {
                 Creature *sh = NULL;
@@ -120,7 +120,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
     {
         if ( GetResurrectQueueSize() )
         {
-            sLog.outString("HillsbradMGR : Resurrecting...");
+            sLog->outString("HillsbradMGR : Resurrecting...");
             for (std::vector<uint64>::const_iterator itr = m_ResurrectQueue.begin(); itr != m_ResurrectQueue.end(); ++itr)
             {
                 Player *plr = objmgr.GetPlayer(*itr);
@@ -145,7 +145,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
             ffachest = urand(0, 9);
             if( uint32 guid = objmgr.AddGOData(HSChestPoints[ffachest].entry, HSChestPoints[ffachest].map, HSChestPoints[ffachest].x, HSChestPoints[ffachest].y, HSChestPoints[ffachest].z, HSChestPoints[ffachest].o, 99999999999, 0, 0, 0, 0) )
             {
-                sLog.outString( "Hillsbrad : Spawned Chest(%u) at location %u.", guid,  ffachest);
+                sLog->outString( "Hillsbrad : Spawned Chest(%u) at location %u.", guid,  ffachest);
                 m_ChestGUID = guid;
                 SendMessageToAll( "FFA chest has been spawned in the fields. Good luck!" );
             }
@@ -176,7 +176,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
     // Chest debug.
     if( m_ChestTimer < diff )
     {
-        sLog.outString( "HillsbradMGR : Timer (%u), Chest Guid(%u), Announce Timer (%u).", m_ChestGUID, m_ChestTimer, m_ChestAnnounceTimer );
+        sLog->outString( "HillsbradMGR : Timer (%u), Chest Guid(%u), Announce Timer (%u).", m_ChestGUID, m_ChestTimer, m_ChestAnnounceTimer );
         m_ChestDebugTimer = 60000;
     }
     else
@@ -262,10 +262,10 @@ void OutdoorPvPHS::HandlePlayerResurrects(Player * plr, uint32 zone)
 
 bool OutdoorPvPHS::HandleOpenGo(Player *plr, uint64 guid)
 {
-    sLog.outString("HillsbradMGR: Using %u.", guid);
+    sLog->outString("HillsbradMGR: Using %u.", guid);
     if( GameObject *obj = plr->GetMap()->GetGameObject( guid ) )
     {
-        sLog.outString("HillsbradMGR : %u, %u is entry %u.", obj->GetGUIDLow(), m_ChestGUID, obj->GetEntry() ); // obj->GetGOInfo()->id );
+        sLog->outString("HillsbradMGR : %u, %u is entry %u.", obj->GetGUIDLow(), m_ChestGUID, obj->GetEntry() ); // obj->GetGOInfo()->id );
         if( obj->GetGUIDLow() == m_ChestGUID )
         {
             m_ChestGUID = 0;
@@ -277,7 +277,7 @@ bool OutdoorPvPHS::HandleOpenGo(Player *plr, uint64 guid)
 
  void OutdoorPvPHS::ApplyZoneBalanceBuff()
 {
-    sLog.outString("HillsbradMGR : Applying Tenacity. %u (%u) Horde. %u (%u) Alliance.", m_HordeBuff, m_HordeCount, m_AllianceBuff, m_AllianceCount);
+    sLog->outString("HillsbradMGR : Applying Tenacity. %u (%u) Horde. %u (%u) Alliance.", m_HordeBuff, m_HordeCount, m_AllianceBuff, m_AllianceCount);
     for (int i = 0; i <= 1; ++i)
     {
         for (PlayerSet::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr)
@@ -331,7 +331,7 @@ void OutdoorPvPHS::OnCreatureCreate(Creature *creature, bool add)
 void OutdoorPvPHS::OnGameObjectCreate(GameObject *go, bool add)
 {
 
-    //sLog.outString("yeap, %u added.", go->GetEntry());
+    //sLog->outString("yeap, %u added.", go->GetEntry());
     OutdoorPvP::OnGameObjectCreate(go, add);
 }
 
@@ -515,7 +515,7 @@ bool OPvPCapturePointHS::Update(uint32 diff)
 void OPvPCapturePointHS::ChangeState()
 {
 
-    sLog.outString("%u changed states from %u to %u.", m_capturePoint->GetEntry(), m_OldState, m_State);
+    sLog->outString("%u changed states from %u to %u.", m_capturePoint->GetEntry(), m_OldState, m_State);
     
     switch( m_capturePoint->GetEntry() )
     {
@@ -606,14 +606,14 @@ void OPvPCapturePointHS::ChangeState()
        // if (((OutdoorPvPHP*)m_PvP)->m_AllianceTowersControlled)
        //     ((OutdoorPvPHP*)m_PvP)->m_AllianceTowersControlled--;
        // sWorld.SendZoneText(267,objmgr.GetTrinityStringForDBCLocale(HP_LANG_LOOSE_A[m_TowerType]));
-        sLog.outString("ALLIANCE!");
+        sLog->outString("ALLIANCE!");
         break;
     case OBJECTIVESTATE_HORDE:
        // field = HP_MAP_H[m_TowerType];
        // if (((OutdoorPvPHP*)m_PvP)->m_HordeTowersControlled)
        //     ((OutdoorPvPHP*)m_PvP)->m_HordeTowersControlled--;
         //sWorld.SendZoneText(OutdoorPvPHPBuffZones[0],objmgr.GetTrinityStringForDBCLocale(HP_LANG_LOOSE_H[m_TowerType]));
-        //sLog.outString("HORDE!");
+        //sLog->outString("HORDE!");
         break;
     case OBJECTIVESTATE_NEUTRAL_ALLIANCE_CHALLENGE:
        // field = HP_MAP_N[m_TowerType];
@@ -713,7 +713,7 @@ void OPvPCapturePointHS::FillInitialWorldStates(WorldPacket &data)
 
 bool OPvPCapturePointHS::HandlePlayerEnter(Player *plr)
 {
-    sLog.outString("Hillsbrad Point : Player %u entered %u radius.", plr->GetGUIDLow(), m_capturePoint->GetEntry() );
+    sLog->outString("Hillsbrad Point : Player %u entered %u radius.", plr->GetGUIDLow(), m_capturePoint->GetEntry() );
     return OPvPCapturePoint::HandlePlayerEnter(plr);
    // {
     //    plr->SendUpdateWorldState(2473, 1);
