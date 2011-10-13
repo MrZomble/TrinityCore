@@ -48,12 +48,12 @@ enum OutdoorPvPHSTowerType{
     HS_TOWER_NUM = 3
 };
 
-const go_type HSCapturePoints[HS_TOWER_NUM] =
+/* const go_type HSCapturePoints[HS_TOWER_NUM] =
 {
     {850000,0,-474.745361f,-1373.009399f,53.323555f,0.174533f,0.0f,0.0f,0.087156f,0.996195f},     // 0 - Lower
     {850001,0,-569.107239f,-1510.894653f,52.848061f,0.174533f,0.0f,0.0f,0.087156f,0.996195f},     // 1 - Lower East
     {850002,0,-450.357513f,-1480.748779f,92.521019f,0.174533f,0.0f,0.0f,0.087156f,0.996195f}     // 2 - Main
-};
+}; */
 
 /* const go_type HSChestPoints[10] = {
     {850015,0,-594.745361,-51.738495,45.944431,0.174533,0,0,0,0},      // 0 - Young Field
