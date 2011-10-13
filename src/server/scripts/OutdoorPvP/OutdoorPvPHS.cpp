@@ -217,6 +217,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
     } else
         m_TenacityTimer -= diff; 
 	*/
+	ApplyZoneBalanceBuff();
     return changed;
 }
 
