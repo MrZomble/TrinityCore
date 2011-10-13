@@ -285,7 +285,7 @@ bool OutdoorPvPHS::HandleOpenGo(Player *plr, uint64 guid)
         {
             Player * plr = *itr;
             {
-                plr->RemoveAurasDueToSpell( HS_SPELL_TENACITY );
+                //plr->RemoveAurasDueToSpell( HS_SPELL_TENACITY );
                 // if( plr->GetTeam() == ALLIANCE )
                 // {
                     // if( m_AllianceBuff > 0 )
