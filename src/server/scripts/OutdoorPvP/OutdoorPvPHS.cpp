@@ -137,6 +137,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
 
     // Arena Chest System.
     // Update the timer.
+	/*
     if( m_ChestGUID == 0 )
     {
         if( m_ChestTimer < diff )
@@ -172,7 +173,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
             else
                 m_ChestAnnounceTimer -= diff;
         }
-    }
+    } 
     // Chest debug.
     if( m_ChestTimer < diff )
     {
@@ -181,7 +182,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
     }
     else
         m_ChestDebugTimer -= diff;
-
+	
     // Player scale checker.
     if( m_TenacityTimer <= diff )
     {
@@ -215,7 +216,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
         m_TenacityTimer = HS_TENACITY_TIME;
     } else
         m_TenacityTimer -= diff; 
-
+	*/
     return changed;
 }
 
