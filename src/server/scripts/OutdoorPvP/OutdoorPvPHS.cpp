@@ -279,7 +279,7 @@ bool OutdoorPvPHS::HandleOpenGo(Player *plr, uint64 guid)
 
  void OutdoorPvPHS::ApplyZoneBalanceBuff()
 {
-    sLog->outString("HillsbradMGR : Applying Tenacity. %u (%u) Horde. %u (%u) Alliance.", m_HordeBuff, m_HordeCount, m_AllianceBuff, m_AllianceCount);
+    //sLog->outString("HillsbradMGR : Applying Tenacity. %u (%u) Horde. %u (%u) Alliance.", m_HordeBuff, m_HordeCount, m_AllianceBuff, m_AllianceCount);
     for (int i = 0; i <= 1; ++i)
     {
         for (PlayerSet::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr)
@@ -298,13 +298,14 @@ bool OutdoorPvPHS::HandleOpenGo(Player *plr, uint64 guid)
                         // plr->SetAuraStack( HS_SPELL_TENACITY, plr, m_HordeBuff );
                 // }
                 // New player protection, fuck a new timer... WILL ADD WHEN REQUIRED.
-                if( plr->GetTotalPlayedTime() >= 300 )
+                if( plr->GetTotalPlayedTime() >= 900 )
                 {
-                        plr->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    if ( plr->HasByteFlag( UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY ) )
+                        plr->RemoveByteFlag( UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY );
                 }
                 else
                 {
-                    plr->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    plr->SetByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY);
                     plr->CombatStopWithPets();
                 }
             }
