@@ -158,7 +158,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
             // Announce when?
             if( m_ChestAnnounceTimer < diff )
             {
-                uint32 ChestTimerSec = uint32( m_ChestTimer / IN_MILISECONDS );
+                uint32 ChestTimerSec = uint32( m_ChestTimer / IN_MILLISECONDS );
                 if (
                     (ChestTimerSec < 3         && ChestTimerSec > 0) ||   
                     (ChestTimerSec < 30        && (ChestTimerSec % 5) == 0) ||         // < 30 sec; every 5 sec                      
