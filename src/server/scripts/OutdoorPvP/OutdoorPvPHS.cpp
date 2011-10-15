@@ -336,7 +336,7 @@ void OutdoorPvPHS::OnGameObjectCreate(GameObject* go, bool add)
 {
 
     sLog->outString("yeap, %u added.", go->GetEntry());
-    OutdoorPvP::OnGameObjectCreate(go, add);
+    //OutdoorPvP::OnGameObjectCreate(go, add);
 }
 
 // Resurrection System
