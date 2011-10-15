@@ -272,6 +272,7 @@ bool OutdoorPvPHS::HandleOpenGo(Player *plr, uint64 guid)
         {
             m_ChestGUID = 0;
             SendMessageToAll( "%s has claimed the chest! The next chest will appear in an hour.", plr->GetName() );
+            return false;
         }
     }
     return false;
@@ -330,11 +331,11 @@ void OutdoorPvPHS::OnCreatureCreate(Creature *creature, bool add)
     }
 }
 
-void OutdoorPvPHS::OnGameObjectCreate(GameObject *obj, bool add)
+void OutdoorPvPHS::OnGameObjectCreate(GameObject *go, bool add)
 {
-    if( !m_map )
-        m_map = obj->GetMap();
-    OutdoorPvP::OnGameObjectCreate(obj, add);
+
+    sLog->outString("yeap, %u added.", go->GetEntry());
+    OutdoorPvP::OnGameObjectCreate(go, add);
 }
 
 // Resurrection System
