@@ -134,10 +134,10 @@ bool OutdoorPvPHS::Update(uint32 diff)
             m_ResurrectQueue.clear();
         }
     }
-
+	
     // Arena Chest System.
     // Update the timer.
-	/*
+	
     if( m_ChestGUID == 0 )
     {
         if( m_ChestTimer < diff )
@@ -174,7 +174,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
                 m_ChestAnnounceTimer -= diff;
         }
     } 
-    // Chest debug.
+    // Chest debug. 
     if( m_ChestTimer < diff )
     {
         sLog->outString( "HillsbradMGR : Timer (%u), Chest Guid(%u), Announce Timer (%u).", m_ChestGUID, m_ChestTimer, m_ChestAnnounceTimer );
@@ -182,7 +182,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
     }
     else
         m_ChestDebugTimer -= diff;
-	
+	/*
     // Player scale checker.
     if( m_TenacityTimer <= diff )
     {
