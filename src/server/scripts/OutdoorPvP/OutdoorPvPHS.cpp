@@ -149,7 +149,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
                 //sLog->outString( "Hillsbrad : Spawned Chest(%u) at location %u.", guid,  ffachest);
                 m_ChestGUID = guid;
                 SendMessageToAll( "FFA chest has been spawned in the fields. Good luck!" );
-				sLog->outString( "HillsbradMGR : Chest(%u) at location %u.", m_ChestGUID,  ffachest);
+				sLog->outString( "Hillsbrad : Spawned Chest(%u) at location %u.", m_ChestGUID,  ffachest);
             }
             m_ChestTimer = HS_FFA_CHEST_TIMER;
         }
@@ -263,17 +263,80 @@ void OutdoorPvPHS::HandlePlayerResurrects(Player * plr, uint32 zone)
     plr->AddAura( HS_SPELL_HONORLESS, plr );
 }
 
-bool OutdoorPvPHS::HandleOpenGo(Player *plr, uint64 guid)
+bool OutdoorPvPHS::HandleOpenGo(Player* plr, uint64 guid)
 {
-    sLog->outString("HillsbradMGR: Using %u.", guid);
-    if(GameObject* obj = plr->GetMap()->GetGameObject(guid))
+    //sLog.outString("HillsbradMGR: Using %u.", guid);
+    if( GameObject* obj = plr->GetMap()->GetGameObject( guid ) )
     {
-        sLog->outString("HillsbradMGR : %u, %u is entry %u.", obj->GetGUIDLow(), m_ChestGUID, obj->GetEntry() ); // obj->GetGOInfo()->id );
+        // Is this the chest?
         if( obj->GetGUIDLow() == m_ChestGUID )
         {
             m_ChestGUID = 0;
             SendMessageToAll( "%s has claimed the chest! The next chest will appear in an hour.", plr->GetName() );
             return false;
+        }
+
+        for (uint32 node = 0; node < HS_CAPTURE_NUM; node+=1)
+        {
+            if ( obj->GetGUIDLow() == m_TowerPoints[node].gameobject ) // Player just opened a capture point..
+            {
+                // Player's team == plr->GetTeam()
+                switch( m_TowerPoints[node].state )
+                {
+                    // If neutral.. make it contested..
+                    case HS_CAPTURE_NEUTRAL:
+                        changeCapturePoint( node, ( plr->GetTeam() == ALLIANCE ) ? HS_CAPTURE_ALLIANCE_CONT : HS_CAPTURE_HORDE_CONT, 60000 );
+                        if( plr->GetTeam() == ALLIANCE )
+                            SendMessageToAll( "%s has claimed %s tower. If left uncontested Alliance will control it in 60 seconds!", plr->GetName(), m_TowerPoints[node].name.c_str() );
+                        else
+                            SendMessageToAll( "%s has claimed %s tower. If left uncontested Horde will control it in 60 seconds!", plr->GetName(), m_TowerPoints[node].name.c_str() );
+                    break;
+                    case HS_CAPTURE_ALLIANCE_CONT:
+                    {
+                        if( plr->GetTeam() == ALLIANCE )
+                        {
+                            if ( m_TowerPoints[node].previousState == HS_CAPTURE_NEUTRAL ) 
+                                return false;
+                            else if ( m_TowerPoints[node].teamIndex == 1 )
+                                changeCapturePoint( node, HS_CAPTURE_ALLIANCE, 0 );
+                        }
+                        else
+                            changeCapturePoint( node, HS_CAPTURE_HORDE_CONT, 60000 );
+                    }
+                    break;
+                    case HS_CAPTURE_HORDE_CONT:
+                    {
+                        if( plr->GetTeam() != ALLIANCE )
+                        {
+                            
+                            if ( m_TowerPoints[node].previousState == HS_CAPTURE_NEUTRAL ) 
+                                return false;
+                            else if ( m_TowerPoints[node].teamIndex == 2 )
+                                changeCapturePoint( node, HS_CAPTURE_HORDE, 0 );
+                        }
+                        else
+                            changeCapturePoint( node, HS_CAPTURE_ALLIANCE_CONT, 60000 );
+                    }
+                    break;
+                    case HS_CAPTURE_ALLIANCE:
+                    {
+                        if( plr->GetTeam() == ALLIANCE )
+                            return false;
+                        changeCapturePoint( node, HS_CAPTURE_HORDE_CONT, 60000 );
+                        SendMessageToAll( "%s has claimed %s tower. If left uncontested Horde will control it in 60 seconds!", plr->GetName(), m_TowerPoints[node].name.c_str() );
+                    }
+                    break;
+                    case HS_CAPTURE_HORDE:
+                    {
+                        if( plr->GetTeam() != ALLIANCE )
+                            return false;
+                        changeCapturePoint( node, HS_CAPTURE_ALLIANCE_CONT, 60000 );
+                        SendMessageToAll( "%s has claimed %s tower. If left uncontested Alliance will control it in 60 seconds!", plr->GetName(), m_TowerPoints[node].name.c_str() );
+                    }
+                    break;
+                }
+                return false;
+            }
         }
     }
     return false;

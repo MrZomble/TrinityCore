@@ -107,7 +107,7 @@ class OutdoorPvPHS : public OutdoorPvP
         void HandlePlayerLeaveZone(Player *plr, uint32 zone);
         void HandlePlayerResurrects(Player * plr, uint32 zone);
     //  void HandleKill(Player * plr, Unit * killed);
-        bool HandleOpenGo(Player *plr, uint64 guid);
+        bool HandleOpenGo(Player* plr, uint64 guid);
     //  bool HandleDropFlag(Player * plr, uint32 spellId);
 
         void ApplyZoneBalanceBuff();
