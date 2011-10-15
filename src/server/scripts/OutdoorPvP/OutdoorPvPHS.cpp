@@ -145,11 +145,11 @@ bool OutdoorPvPHS::Update(uint32 diff)
             uint32 ffachest = 0;
             ffachest = urand(0, 9);
             if( uint32 guid = sObjectMgr->AddGOData(HSChestPoints[ffachest].entry, HSChestPoints[ffachest].map, HSChestPoints[ffachest].x, HSChestPoints[ffachest].y, HSChestPoints[ffachest].z, HSChestPoints[ffachest].o, 99999999999, 0, 0, 0, 0) )
-			if( uint32 guid = sObjectMgr->AddGOData(HSChestPoints[ffachest].entry, HSChestPoints[ffachest].map, HSChestPoints[ffachest].x, HSChestPoints[ffachest].y, HSChestPoints[ffachest].z, HSChestPoints[ffachest].o, 99999999999, 0, 0, 0, 0) )
-            {
-                sLog->outString( "Hillsbrad : Spawned Chest(%u) at location %u.", guid,  ffachest);
+			{
+                //sLog->outString( "Hillsbrad : Spawned Chest(%u) at location %u.", guid,  ffachest);
                 m_ChestGUID = guid;
                 SendMessageToAll( "FFA chest has been spawned in the fields. Good luck!" );
+				sLog->outString( "HillsbradMGR : Chest(%u) at location %u.", m_ChestGUID,  ffachest);
             }
             m_ChestTimer = HS_FFA_CHEST_TIMER;
         }
@@ -178,7 +178,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
     // Chest debug. 
     if( m_ChestTimer < diff )
     {
-        sLog->outString( "HillsbradMGR : Timer (%u), Chest Guid(%u), Announce Timer (%u).", m_ChestGUID, m_ChestTimer, m_ChestAnnounceTimer );
+        sLog->outString( "HillsbradMGR : Chest Guid (%u), Timer (%u), Announce Timer (%u).", m_ChestGUID, m_ChestTimer, m_ChestAnnounceTimer );
         m_ChestDebugTimer = 60000;
     }
     else
@@ -263,7 +263,7 @@ void OutdoorPvPHS::HandlePlayerResurrects(Player * plr, uint32 zone)
     plr->AddAura( HS_SPELL_HONORLESS, plr );
 }
 
-bool OutdoorPvPHS::HandleOpenGo(Player* plr, uint64 guid)
+bool OutdoorPvPHS::HandleOpenGo(Player *plr, uint64 guid)
 {
     sLog->outString("HillsbradMGR: Using %u.", guid);
     if(GameObject* obj = plr->GetMap()->GetGameObject(guid))
