@@ -120,7 +120,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
     {
         if ( GetResurrectQueueSize() )
         {
-            sLog->outString("HillsbradMGR : Resurrecting...");
+            //sLog->outString("HillsbradMGR : Resurrecting...");
             for (std::vector<uint64>::const_iterator itr = m_ResurrectQueue.begin(); itr != m_ResurrectQueue.end(); ++itr)
             {
                 Player* plr = ObjectAccessor::FindPlayer(*itr);
@@ -330,11 +330,11 @@ void OutdoorPvPHS::OnCreatureCreate(Creature *creature, bool add)
     }
 }
 
-void OutdoorPvPHS::OnGameObjectCreate(GameObject *go, bool add)
+void OutdoorPvPHS::OnGameObjectCreate(GameObject *obj, bool add)
 {
-
-    //sLog->outString("yeap, %u added.", go->GetEntry());
-    //OutdoorPvP::OnGameObjectCreate(go, add);
+    if( !m_map )
+        m_map = obj->GetMap();
+    OutdoorPvP::OnGameObjectCreate(obj, add);
 }
 
 // Resurrection System
