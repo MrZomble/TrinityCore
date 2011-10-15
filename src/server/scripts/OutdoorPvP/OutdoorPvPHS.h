@@ -167,6 +167,8 @@ class OutdoorPvPHS : public OutdoorPvP
 
         // Durnholde Towers.
         uint16 m_TowerStateMain, m_TowerStateEast, m_TowerStateWest;
+		
+		Map * m_map;
 };
 
 #endif
