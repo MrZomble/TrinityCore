@@ -183,7 +183,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
         {
             uint32 ffachest = 0;
             ffachest = urand(0, 9);
-            if( uint32 guid = sObjectMgr->AddGOData(HSChestPoints[ffachest].entry, HSChestPoints[ffachest].map, HSChestPoints[ffachest].x, HSChestPoints[ffachest].y, HSChestPoints[ffachest].z, HSChestPoints[ffachest].o, 99999999999, 0, 0, 0, 0) )
+            if( uint64 guid = sObjectMgr->AddGOData(HSChestPoints[ffachest].entry, HSChestPoints[ffachest].map, HSChestPoints[ffachest].x, HSChestPoints[ffachest].y, HSChestPoints[ffachest].z, HSChestPoints[ffachest].o, 99999999999, 0, 0, 0, 0) )
             {
                 sLog->outString( "Hillsbrad : Spawned Chest(%u) at location %u.", guid,  ffachest);
                 m_ChestGUID = guid;
@@ -355,7 +355,7 @@ void OutdoorPvPHS::HandlePlayerResurrects(Player * plr, uint32 zone)
 bool OutdoorPvPHS::HandleOpenGo(Player* plr, uint64 guid)
 {
     //sLog->outString("HillsbradMGR: Using %u.", guid);
-    if( GameObject* obj = plr->GetMap()->GetGameObject( guid ) )
+    if(GameObject* obj = plr->GetMap()->GetGameObject(guid))
     {
         // Is this the chest?
         if( obj->GetGUIDLow() == m_ChestGUID )
