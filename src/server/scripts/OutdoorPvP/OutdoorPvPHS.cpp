@@ -1005,3 +1005,23 @@ void OPvPCapturePointHS::DeleteSpawns()
     for (std::map<uint32,uint64>::iterator i = m_Creatures.begin(); i != m_Creatures.end(); ++i)
         DelCreature(i->first);
 }
+
+class OutdoorPvP_hellscream : public OutdoorPvPScript
+{
+    public:
+
+        OutdoorPvP_hellscream()
+            : OutdoorPvPScript("outdoorpvp_hs")
+        {
+        }
+
+        OutdoorPvP* GetOutdoorPvP() const
+        {
+            return new OutdoorPvPHS();
+        }
+};
+
+void AddSC_outdoorpvp_hs()
+{
+    new OutdoorPvP_hellscream();
+}
