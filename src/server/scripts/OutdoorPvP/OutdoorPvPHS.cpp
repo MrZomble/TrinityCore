@@ -265,7 +265,7 @@ void OutdoorPvPHS::HandlePlayerResurrects(Player * plr, uint32 zone)
 
 bool OutdoorPvPHS::HandleOpenGo(Player* plr, uint64 guid)
 {
-    sLog.outString("HillsbradMGR: Using %u.", guid);
+    sLog->outString("HillsbradMGR: Using %u.", guid);
     if(GameObject* obj = plr->GetMap()->GetGameObject(guid))
     {
         // Is this the chest?
