@@ -273,7 +273,7 @@ bool OutdoorPvPHS::HandleOpenGo(Player* plr, uint64 guid)
         {
             m_ChestGUID = 0;
             SendMessageToAll("%s has claimed the chest! The next chest will appear in an hour.", plr->GetName());
-            return false;
+            return;
         }
 		/*
         for (uint32 node = 0; node < HS_CAPTURE_NUM; node+=1)
@@ -339,7 +339,7 @@ bool OutdoorPvPHS::HandleOpenGo(Player* plr, uint64 guid)
             }
         } */
     }
-    return false;
+    return;
 }
 
  void OutdoorPvPHS::ApplyZoneBalanceBuff()
