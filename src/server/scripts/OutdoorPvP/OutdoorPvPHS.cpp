@@ -275,7 +275,7 @@ bool OutdoorPvPHS::HandleOpenGo(Player* plr, uint64 guid)
             SendMessageToAll("%s has claimed the chest! The next chest will appear in an hour.", plr->GetName());
             return false;
         }
-
+		/*
         for (uint32 node = 0; node < HS_CAPTURE_NUM; node+=1)
         {
             if ( obj->GetGUIDLow() == m_TowerPoints[node].gameobject ) // Player just opened a capture point..
@@ -337,7 +337,7 @@ bool OutdoorPvPHS::HandleOpenGo(Player* plr, uint64 guid)
                 }
                 return false;
             }
-        }
+        } */
     }
     return false;
 }
