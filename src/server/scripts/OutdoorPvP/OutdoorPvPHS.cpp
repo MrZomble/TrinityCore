@@ -585,7 +585,7 @@ void OutdoorPvPHS::OnGameObjectCreate(GameObject* obj, bool add)
 {
     if( !m_map )
         m_map = obj->GetMap();
-    OutdoorPvP::OnGameObjectCreate(obj, add);
+    //OutdoorPvP::OnGameObjectCreate(obj, add);
 }
 
 // Resurrection System
