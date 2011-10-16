@@ -449,16 +449,16 @@ void OutdoorPvPHS::changeCapturePoint( uint32 node, HSCapturePointState newState
     
     // Now, delete the old gameobject, replace with new...
 
-    if (GameObjectData const* data = objmgr.GetGOData(m_TowerPoints[node].gameobject) )
+    if (GameObjectData const* data = sObjectMgr->GetGOData(m_TowerPoints[node].gameobject) )
     {
-        objmgr.RemoveGameobjectFromGrid(m_TowerPoints[node].gameobject, data);
+        sObjectMgr->RemoveGameobjectFromGrid(m_TowerPoints[node].gameobject, data);
 
         if (GameObject* gob = sObjectAccessor->GetObjectInWorld(MAKE_NEW_GUID(m_TowerPoints[node].gameobject, data->id, HIGHGUID_GAMEOBJECT), (GameObject*)NULL))
         {
             uint32 guid = gob->GetDBTableGUIDLow();
             gob->SetRespawnTime(0);                                 // not save respawn time
             gob->Delete();
-            objmgr.DeleteGOData(guid);
+            sObjectMgr->DeleteGOData(guid);
         } else
             sLog->outString("CANNOT DELETE %u. NO OBJECT", m_TowerPoints[node].gameobject);
     } else
@@ -857,14 +857,14 @@ void OPvPCapturePointHS::ChangeState()
        // field = HP_MAP_A[m_TowerType];
        // if (((OutdoorPvPHP*)m_PvP)->m_AllianceTowersControlled)
        //     ((OutdoorPvPHP*)m_PvP)->m_AllianceTowersControlled--;
-       // sWorld.SendZoneText(267,objmgr.GetTrinityStringForDBCLocale(HP_LANG_LOOSE_A[m_TowerType]));
+       // sWorld.SendZoneText(267,sObjectMgr->GetTrinityStringForDBCLocale(HP_LANG_LOOSE_A[m_TowerType]));
         sLog->outString("ALLIANCE!");
         break;
     case OBJECTIVESTATE_HORDE:
        // field = HP_MAP_H[m_TowerType];
        // if (((OutdoorPvPHP*)m_PvP)->m_HordeTowersControlled)
        //     ((OutdoorPvPHP*)m_PvP)->m_HordeTowersControlled--;
-        //sWorld.SendZoneText(OutdoorPvPHPBuffZones[0],objmgr.GetTrinityStringForDBCLocale(HP_LANG_LOOSE_H[m_TowerType]));
+        //sWorld.SendZoneText(OutdoorPvPHPBuffZones[0],sObjectMgr->GetTrinityStringForDBCLocale(HP_LANG_LOOSE_H[m_TowerType]));
         //sLog->outString("HORDE!");
         break;
     case OBJECTIVESTATE_NEUTRAL_ALLIANCE_CHALLENGE:
@@ -900,7 +900,7 @@ void OPvPCapturePointHS::ChangeState()
         artkit2 = HP_TowerArtKit_A[m_TowerType];
         if (((OutdoorPvPHP*)m_PvP)->m_AllianceTowersControlled<3)
             ((OutdoorPvPHP*)m_PvP)->m_AllianceTowersControlled++;
-        sWorld.SendZoneText(OutdoorPvPHPBuffZones[0],objmgr.GetTrinityStringForDBCLocale(HP_LANG_CAPTURE_A[m_TowerType]));
+        sWorld.SendZoneText(OutdoorPvPHPBuffZones[0],sObjectMgr->GetTrinityStringForDBCLocale(HP_LANG_CAPTURE_A[m_TowerType]));
         break;
     case OBJECTIVESTATE_HORDE:
         field = HP_MAP_H[m_TowerType];
@@ -908,7 +908,7 @@ void OPvPCapturePointHS::ChangeState()
         artkit2 = HP_TowerArtKit_H[m_TowerType];
         if (((OutdoorPvPHP*)m_PvP)->m_HordeTowersControlled<3)
             ((OutdoorPvPHP*)m_PvP)->m_HordeTowersControlled++;
-        sWorld.SendZoneText(OutdoorPvPHPBuffZones[0],objmgr.GetTrinityStringForDBCLocale(HP_LANG_CAPTURE_H[m_TowerType]));
+        sWorld.SendZoneText(OutdoorPvPHPBuffZones[0],sObjectMgr->GetTrinityStringForDBCLocale(HP_LANG_CAPTURE_H[m_TowerType]));
         break;
     case OBJECTIVESTATE_NEUTRAL_ALLIANCE_CHALLENGE:
         field = HP_MAP_N[m_TowerType];
