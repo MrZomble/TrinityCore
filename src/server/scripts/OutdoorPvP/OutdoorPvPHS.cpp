@@ -74,10 +74,10 @@ bool OutdoorPvPHS::SetupOutdoorPvP()
         AddCapturePoint( cp );
         m_TowerPoints[node].capturepoint = cp->m_capturePointGUID;
         // Flag Pole... not really super important?
-        objmgr.AddGOData(HSCapturePoints[node].entry, HSCapturePoints[node].map, HSCapturePoints[node].x, HSCapturePoints[node].y, HSCapturePoints[node].z - 0.2f, HSCapturePoints[node].o, 99999999999, 0, 0, 0, 0);
+        sObjectMgr->AddGOData(HSCapturePoints[node].entry, HSCapturePoints[node].map, HSCapturePoints[node].x, HSCapturePoints[node].y, HSCapturePoints[node].z - 0.2f, HSCapturePoints[node].o, 99999999999, 0, 0, 0, 0);
         // Banner..
         m_TowerPoints[node].gameobject = 0;
-        if ( uint64 guid = objmgr.AddGOData(HS_CAPTURE_BANNER_0 + node, HSCapturePoints[node].map, HSCapturePoints[node].x, HSCapturePoints[node].y, HSCapturePoints[node].z - 0.2f, HSCapturePoints[node].o, 99999999999, 0, 0, 0, 0) )
+        if ( uint64 guid = sObjectMgr->AddGOData(HS_CAPTURE_BANNER_0 + node, HSCapturePoints[node].map, HSCapturePoints[node].x, HSCapturePoints[node].y, HSCapturePoints[node].z - 0.2f, HSCapturePoints[node].o, 99999999999, 0, 0, 0, 0) )
         {
             sLog->outString( "Hillsbrad : Spawned Banner(%u) at node %u.", guid, node);
             m_TowerPoints[node].gameobject = guid;
@@ -453,7 +453,7 @@ void OutdoorPvPHS::changeCapturePoint( uint32 node, HSCapturePointState newState
     {
         objmgr.RemoveGameobjectFromGrid(m_TowerPoints[node].gameobject, data);
 
-        if (GameObject* gob = sObjectAccessor.GetObjectInWorld(MAKE_NEW_GUID(m_TowerPoints[node].gameobject, data->id, HIGHGUID_GAMEOBJECT), (GameObject*)NULL))
+        if (GameObject* gob = sObjectAccessor->GetObjectInWorld(MAKE_NEW_GUID(m_TowerPoints[node].gameobject, data->id, HIGHGUID_GAMEOBJECT), (GameObject*)NULL))
         {
             uint32 guid = gob->GetDBTableGUIDLow();
             gob->SetRespawnTime(0);                                 // not save respawn time
@@ -521,7 +521,7 @@ void OutdoorPvPHS::changeCapturePoint( uint32 node, HSCapturePointState newState
 
     // Spawn the new one..
     m_TowerPoints[node].gameobject = 0;
-    if ( uint64 guid = objmgr.AddGOData(banner, HSCapturePoints[node].map, HSCapturePoints[node].x, HSCapturePoints[node].y, HSCapturePoints[node].z - 0.2f, HSCapturePoints[node].o, 99999999999, 0, 0, 0, 0) )
+    if ( uint64 guid = sObjectMgr->AddGOData(banner, HSCapturePoints[node].map, HSCapturePoints[node].x, HSCapturePoints[node].y, HSCapturePoints[node].z - 0.2f, HSCapturePoints[node].o, 99999999999, 0, 0, 0, 0) )
     {
         sLog->outString( "Hillsbrad : Spawned Banner(%u) at node %u.", guid, node);
         m_TowerPoints[node].gameobject = guid;
