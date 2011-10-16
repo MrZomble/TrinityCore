@@ -2,8 +2,8 @@
  * Copyright (C) 2010 Wowtorn <http://www.wowtorn.net/>
  */
 
-#ifndef OUTDOOR_PVP_HELLSCREAM_
-#define OUTDOOR_PVP_HELLSCREAM_
+#ifndef OUTDOOR_PVP_HS_
+#define OUTDOOR_PVP_HS_
 
 #include "OutdoorPvP.h"
 

@@ -22,7 +22,7 @@
 
 OutdoorPvPHS::OutdoorPvPHS()
 {
-    m_TypeId = OUTDOOR_PVP_HELLSCREAM;
+    m_TypeId = OUTDOOR_PVP_HS;
 }
 
 bool OutdoorPvPHS::SetupOutdoorPvP()
