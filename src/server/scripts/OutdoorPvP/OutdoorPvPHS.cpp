@@ -525,8 +525,8 @@ void OutdoorPvPHS::changeCapturePoint( uint32 node, HSCapturePointState newState
     {
         sLog->outString( "Hillsbrad : Spawned Banner(%u) at node %u.", guid, node);
         m_TowerPoints[node].gameobject = guid;
-    }
-} */
+    } */
+} 
 
 void OutdoorPvPHS::ApplyZoneBalanceBuff()
 {
