@@ -354,11 +354,12 @@ void OutdoorPvPHS::HandlePlayerResurrects(Player * plr, uint32 zone)
 
 bool OutdoorPvPHS::HandleOpenGo(Player* plr, uint64 guid)
 {
-    //sLog->outString("HillsbradMGR: Using %u.", guid);
-    if(GameObject* obj = plr->GetMap()->GetGameObject(guid))
+    sLog->outString("HillsbradMGR: Using %u.", guid);
+    //if(GameObject* obj = plr->GetMap()->GetGameObject(guid))
+	if(GameObject* obj = sOutdoorPvPMgr->HandleOpenGo(plr, gameObjTarget->GetGUID())
     {
         // Is this the chest?
-        if( obj->GetGUIDLow() == m_ChestGUID )
+        if(obj->GetGUIDLow() == m_ChestGUID)
         {
             m_ChestGUID = 0;
             SendMessageToAll( "%s has claimed the chest! The next chest will appear in an hour.", plr->GetName() );
