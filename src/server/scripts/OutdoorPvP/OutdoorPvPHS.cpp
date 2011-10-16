@@ -432,7 +432,7 @@ bool OutdoorPvPHS::HandleOpenGo(Player* plr, uint64 guid)
 }
 
 void OutdoorPvPHS::changeCapturePoint( uint32 node, HSCapturePointState newState, uint32 timer )
-{
+{  /*
     // Set the states
     m_TowerPoints[node].previousState = m_TowerPoints[node].state;
     m_TowerPoints[node].state = newState;
@@ -526,7 +526,7 @@ void OutdoorPvPHS::changeCapturePoint( uint32 node, HSCapturePointState newState
         sLog->outString( "Hillsbrad : Spawned Banner(%u) at node %u.", guid, node);
         m_TowerPoints[node].gameobject = guid;
     }
-}
+} */
 
 void OutdoorPvPHS::ApplyZoneBalanceBuff()
 {
@@ -561,7 +561,7 @@ void OutdoorPvPHS::ApplyZoneBalanceBuff()
                 }
             }
         }
-    }
+    } 
 }
 
 // On creature spawn
@@ -765,7 +765,7 @@ bool OPvPCapturePointHS::Update(uint32 diff)
 }
 
 void OPvPCapturePointHS::ChangeState()
-{
+{ /*
 
     //sLog->outString("%u changed states from %u to %u.", m_capturePoint->GetEntry(), m_OldState, m_State);
     
@@ -846,7 +846,7 @@ void OPvPCapturePointHS::ChangeState()
                 break;
             }
         break;
-    }
+    } */
 /*
     switch(m_OldState)
     {
