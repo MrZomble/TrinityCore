@@ -2,8 +2,8 @@
  * Copyright (C) 2010 Wowtorn <http://www.wowtorn.net/>
  */
 
-#ifndef OUTDOOR_PVP_HS_
-#define OUTDOOR_PVP_HS_
+#ifndef OUTDOOR_PVP_HELLSCREAM_
+#define OUTDOOR_PVP_HELLSCREAM_
 
 #include "OutdoorPvP.h"
 
@@ -29,7 +29,7 @@ enum HS_Timers
 {
     HS_TENACITY_TIME                    = 60000,
     HS_RESURRECTION_INTERVAL            = 30000,
-    HS_FFA_CHEST_TIMER                  = 900000,
+    HS_FFA_CHEST_TIMER                  = 3600000,
     HS_FFA_CHEST_ANNOUNCE_TIMER         = 1000,
 };
 
@@ -41,12 +41,31 @@ enum HS_Creatures
 
 #define HS_ZONE          267
 
-enum OutdoorPvPHSTowerType
-{
+enum OutdoorPvPHSTowerType{
     HS_TOWER_LOWER = 0,
     HS_TOWER_LOWER_EAST = 1,
     HS_TOWER_MAIN = 2,
-    HS_TOWER_NUM = 3
+    // Capture points for ease of use...
+    HS_CAPTURE_SOUTH    = 3,
+    HS_CAPTURE_DARROW    = 4,
+    HS_CAPTURE_NETHANDER   = 5,
+    HS_TOWER_NUM = 6
+};
+
+const go_type HSConquestPoints[HS_TOWER_NUM] = {
+    {850000,0,-474.745361,-1373.009399,53.323555,0.174533,0,0,0.087156,0.996195},     // 0 - Lower
+    {850001,0,-569.107239,-1510.894653,52.848061,0.174533,0,0,0.087156,0.996195},     // 1 - Lower East
+    {850002,0,-450.357513,-1480.748779,92.521019,0.174533,0,0,0.087156,0.996195}     // 2 - Main
+    // AB capture system.
+    {850030,0,-659.569298,412.013489,83.357964,3.746807,0,0,0,0},                     // 0 - Southpoint Tower
+    {850031,0,-323.441711,-698.090149,57.967308,1.92390,0,0,0,0},                     // 1 - Darrow Hill Tower
+    {850032,0,-622.047485,-1045.131592,65.926140,3.309312,0,0,0}                     // 2 - Nethander Stead Tower
+};
+
+// Tower Capture.
+
+enum OutdoorPvPHSCaptureType{
+    HS_CAPTURE_NUM = 3
 };
 
 const go_type HSCapturePoints[HS_TOWER_NUM] =
@@ -54,7 +73,39 @@ const go_type HSCapturePoints[HS_TOWER_NUM] =
     {850000,0,-474.745361f,-1373.009399f,53.323555f,0.174533f,0.0f,0.0f,0.087156f,0.996195f},     // 0 - Lower
     {850001,0,-569.107239f,-1510.894653f,52.848061f,0.174533f,0.0f,0.0f,0.087156f,0.996195f},     // 1 - Lower East
     {850002,0,-450.357513f,-1480.748779f,92.521019f,0.174533f,0.0f,0.0f,0.087156f,0.996195f}     // 2 - Main
-}; 
+};
+
+enum HSCaptureObjectId
+{
+    HS_CAPTURE_BANNER_0    = 850023,       // Southpoint banner
+    HS_CAPTURE_BANNER_1    = 850024,       // Darrow Hill banner
+    HS_CAPTURE_BANNER_2    = 850025,       // Nethander Stead banner
+};
+
+enum HSCapturePointState
+{
+    HS_CAPTURE_NEUTRAL       = 0,
+    HS_CAPTURE_ALLIANCE      = 1,
+    HS_CAPTURE_ALLIANCE_CONT = 2,
+    HS_CAPTURE_HORDE         = 3,
+    HS_CAPTURE_HORDE_CONT    = 4
+};
+
+struct HSCapturePoint
+{
+    uint64      gameobject;
+    uint32      timer;
+    bool        timerActive;
+    bool        locked;
+    HSCapturePointState state;
+    HSCapturePointState previousState;
+    uint8       teamIndex;
+    uint32      capturepoint;
+    std::string name;
+    uint32      killcredit;
+};
+
+// FFA Chest Spawns.
 
 const go_type HSChestPoints[10] = {
     {850015,0,-594.745361,-51.738495,45.944431,0.174533,0,0,0,0},      // 0 - Young Field
@@ -66,8 +117,8 @@ const go_type HSChestPoints[10] = {
     {850015,0,-548.236938,-105.017731,53.077545,1.641531,0,0,0,0},     // 6 - House Roof
     {850015,0,-457.335114,92.229897,58.199024,4.366654,0,0,0,0},       // 7 - Cart
     {850015,0,-486.734344,119.628014,60.418327,3.231307,0,0,0,0},      // 8 - Inside Town Hall
-    {850015,0,-337.863281,38.192230,55.173203,2.969530,0,0,0,0}       // 9 - Water Towers
-}; 
+    {850015,0,-337.863281,38.192230,55.173203,2.969530,0,0,0,0},       // 9 - Water Towers
+};
 
 class OPvPCapturePointHS : public OPvPCapturePoint
 {
@@ -80,14 +131,14 @@ class OPvPCapturePointHS : public OPvPCapturePoint
         // used when player is activated/inactivated in the area
         bool HandlePlayerEnter(Player * plr);
         void HandlePlayerLeave(Player * plr);
-        
+
         void RespawnVisualTower(uint32 entry);
 
         void DeleteSpawns();
     private:
         OutdoorPvPHSTowerType m_TowerType;
         bool m_locked;
-}; 
+};
 
 class OutdoorPvPHS : public OutdoorPvP
 {
@@ -103,17 +154,19 @@ class OutdoorPvPHS : public OutdoorPvP
         void FillInitialWorldStates(WorldPacket &data);
         void SendRemoveWorldStates(Player * plr);
 
-        void HandlePlayerEnterZone(Player *plr, uint32 zone);
-        void HandlePlayerLeaveZone(Player *plr, uint32 zone);
+        void HandlePlayerEnterZone(Player* plr, uint32 zone);
+        void HandlePlayerLeaveZone(Player* plr, uint32 zone);
         void HandlePlayerResurrects(Player * plr, uint32 zone);
     //  void HandleKill(Player * plr, Unit * killed);
         bool HandleOpenGo(Player* plr, uint64 guid);
     //  bool HandleDropFlag(Player * plr, uint32 spellId);
 
+        void changeCapturePoint( uint32 node, HSCapturePointState newState, uint32 timer );
+
         void ApplyZoneBalanceBuff();
 
-        void OnGameObjectCreate(GameObject* go, bool add);
-        void OnCreatureCreate(Creature *creature, bool add);
+        void OnGameObjectCreate(GameObject* obj, bool add);
+        void OnCreatureCreate(Creature* creature, bool add);
 
     //  void RewardItem(Player *plr, uint32 item_id, uint32 count);
 
@@ -127,7 +180,7 @@ class OutdoorPvPHS : public OutdoorPvP
     //  uint64& GetFlagHolderGUID() { return m_FlagHolderGUID; }
 
         // Resurrection System
-        void SendAreaSpiritHealerQueryOpcode(Player *pl, const uint64& guid);
+        void SendAreaSpiritHealerQueryOpcode(Player* pl, const uint64& guid);
         void AddPlayerToResurrectQueue(uint64 npc_guid, uint64 player_guid);
         void RemovePlayerFromResurrectQueue(uint64 player_guid);
 
@@ -151,8 +204,12 @@ class OutdoorPvPHS : public OutdoorPvP
         uint32 m_ChestAnnounceTimer;
         uint32 m_ChestDebugTimer;
 
+        // Tower Capture System
+        HSCapturePoint   m_TowerPoints[HS_CAPTURE_NUM];
+
         // Timers.
         uint32 m_TenacityTimer;
+        uint32 m_TowerAnnounceTimer;
         // Count.
         uint32 m_PlayerCount;
         uint32 m_HordeCount;
@@ -167,8 +224,8 @@ class OutdoorPvPHS : public OutdoorPvP
 
         // Durnholde Towers.
         uint16 m_TowerStateMain, m_TowerStateEast, m_TowerStateWest;
-		
-		Map * m_map;
+
+        Map * m_map;
 };
 
 #endif
