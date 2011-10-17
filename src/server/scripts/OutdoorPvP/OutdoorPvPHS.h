@@ -29,7 +29,7 @@ enum HS_Timers
 {
     HS_TENACITY_TIME                    = 60000,
     HS_RESURRECTION_INTERVAL            = 30000,
-    HS_FFA_CHEST_TIMER                  = 3600000,
+    HS_FFA_CHEST_TIMER                  = 600000,
     HS_FFA_CHEST_ANNOUNCE_TIMER         = 1000,
 };
 
