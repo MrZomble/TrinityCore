@@ -494,7 +494,7 @@ void WorldSession::LogoutPlayer(bool Save)
         _player->CleanupsBeforeDelete();
         sLog->outChar("Account: %d (IP: %s) Logout Character:[%s] (GUID: %u)", GetAccountId(), GetRemoteAddress().c_str(), _player->GetName(), _player->GetGUIDLow());
         Map* _map = _player->GetMap();
-        _map->Remove(_player, true);
+        _map->RemoveFromMap(_player, true);
         SetPlayer(NULL);                                    // deleted in Remove call
 
         ///- Send the 'logout complete' packet to the client
@@ -999,6 +999,7 @@ void WorldSession::ProcessQueryCallbacks()
         HandleCharCreateCallback(pResult, _charCreateCallback.GetParam());
         // Don't call FreeResult() here, the callback handler will do that depending on the events in the callback chain
     }
+
     //! HandlePlayerLoginOpcode
     if (_charLoginCallback.ready())
     {

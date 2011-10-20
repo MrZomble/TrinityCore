@@ -137,7 +137,7 @@ bool ForcedDespawnDelayEvent::Execute(uint64 /*e_time*/, uint32 /*p_time*/)
     return true;
 }
 
-Creature::Creature(): Unit(),
+Creature::Creature(): Unit(), MapCreature(),
 lootForPickPocketed(false), lootForBody(false), m_groupLootTimer(0), lootingGroupLowGUID(0),
 m_PlayerDamageReq(0), m_lootMoney(0), m_lootRecipient(0), m_lootRecipientGroup(0), m_corpseRemoveTime(0), m_respawnTime(0),
 m_respawnDelay(300), m_corpseDelay(60), m_respawnradius(0.0f), m_reactState(REACT_AGGRESSIVE),
@@ -245,7 +245,7 @@ void Creature::RemoveCorpse(bool setSpawnTime)
         m_respawnTime = time(NULL) + respawnDelay;
 
     float x, y, z, o;
-    GetRespawnCoord(x, y, z, &o);
+    GetRespawnPosition(x, y, z, &o);
     SetHomePosition(x, y, z, o);
     GetMap()->CreatureRelocation(this, x, y, z, o);
 }
@@ -659,9 +659,8 @@ void Creature::DoFleeToGetAssistance()
     {
         Creature* creature = NULL;
 
-        CellPair p(Trinity::ComputeCellPair(GetPositionX(), GetPositionY()));
+        CellCoord p(Trinity::ComputeCellCoord(GetPositionX(), GetPositionY()));
         Cell cell(p);
-        cell.data.Part.reserved = ALL_DISTRICT;
         cell.SetNoCreate();
         Trinity::NearestAssistCreatureInCreatureRangeCheck u_check(this, getVictim(), radius);
         Trinity::CreatureLastSearcher<Trinity::NearestAssistCreatureInCreatureRangeCheck> searcher(this, creature, u_check);
@@ -1285,7 +1284,7 @@ bool Creature::LoadFromDB(uint32 guid, Map* map)
         if (canFly())
         {
             float tz = map->GetHeight(data->posX, data->posY, data->posZ, false);
-            if (data->posZ - tz > 0.1)
+            if (data->posZ - tz > 0.1f)
                 Relocate(data->posX, data->posY, tz);
         }
     }
@@ -1382,22 +1381,19 @@ void Creature::DeleteFromDB()
     WorldDatabase.CommitTransaction(trans);
 }
 
-bool Creature::isVisibleForInState(WorldObject const* seer) const
+bool Creature::IsInvisibleDueToDespawn() const
 {
-    if (!Unit::isVisibleForInState(seer))
-        return false;
+    if (Unit::IsInvisibleDueToDespawn())
+        return true;
 
     if (isAlive() || m_corpseRemoveTime > time(NULL))
-        return true;
+        return false;
 
-    return false;
+    return true;
 }
 
-bool Creature::canSeeAlways(WorldObject const* obj) const
+bool Creature::CanAlwaysSee(WorldObject const* obj) const
 {
-    if (Unit::canSeeAlways(obj))
-        return true;
-
     if (IsAIEnabled && AI()->CanSeeAlways(obj))
         return true;
 
@@ -1763,9 +1759,8 @@ SpellInfo const* Creature::reachWithSpellCure(Unit* pVictim)
 // select nearest hostile unit within the given distance (regardless of threat list).
 Unit* Creature::SelectNearestTarget(float dist) const
 {
-    CellPair p(Trinity::ComputeCellPair(GetPositionX(), GetPositionY()));
+    CellCoord p(Trinity::ComputeCellCoord(GetPositionX(), GetPositionY()));
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     Unit* target = NULL;
@@ -1790,9 +1785,8 @@ Unit* Creature::SelectNearestTarget(float dist) const
 // select nearest hostile unit within the given attack distance (i.e. distance is ignored if > than ATTACK_DISTANCE), regardless of threat list.
 Unit* Creature::SelectNearestTargetInAttackDistance(float dist) const
 {
-    CellPair p(Trinity::ComputeCellPair(GetPositionX(), GetPositionY()));
+    CellCoord p(Trinity::ComputeCellCoord(GetPositionX(), GetPositionY()));
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
     Unit* target = NULL;
@@ -1853,9 +1847,8 @@ void Creature::CallAssistance()
             std::list<Creature*> assistList;
 
             {
-                CellPair p(Trinity::ComputeCellPair(GetPositionX(), GetPositionY()));
+                CellCoord p(Trinity::ComputeCellCoord(GetPositionX(), GetPositionY()));
                 Cell cell(p);
-                cell.data.Part.reserved = ALL_DISTRICT;
                 cell.SetNoCreate();
 
                 Trinity::AnyAssistCreatureInRangeCheck u_check(this, getVictim(), radius);
@@ -1881,22 +1874,21 @@ void Creature::CallAssistance()
     }
 }
 
-void Creature::CallForHelp(float fRadius)
+void Creature::CallForHelp(float radius)
 {
-    if (fRadius <= 0.0f || !getVictim() || isPet() || isCharmed())
+    if (radius <= 0.0f || !getVictim() || isPet() || isCharmed())
         return;
 
-    CellPair p(Trinity::ComputeCellPair(GetPositionX(), GetPositionY()));
+    CellCoord p(Trinity::ComputeCellCoord(GetPositionX(), GetPositionY()));
     Cell cell(p);
-    cell.data.Part.reserved = ALL_DISTRICT;
     cell.SetNoCreate();
 
-    Trinity::CallOfHelpCreatureInRangeDo u_do(this, getVictim(), fRadius);
+    Trinity::CallOfHelpCreatureInRangeDo u_do(this, getVictim(), radius);
     Trinity::CreatureWorker<Trinity::CallOfHelpCreatureInRangeDo> worker(this, u_do);
 
     TypeContainerVisitor<Trinity::CreatureWorker<Trinity::CallOfHelpCreatureInRangeDo>, GridTypeMapContainer >  grid_creature_searcher(worker);
 
-    cell.Visit(p, grid_creature_searcher, *GetMap(), *this, fRadius);
+    cell.Visit(p, grid_creature_searcher, *GetMap(), *this, radius);
 }
 
 bool Creature::CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction /*= true*/) const
@@ -2208,7 +2200,7 @@ time_t Creature::GetRespawnTimeEx() const
         return now;
 }
 
-void Creature::GetRespawnCoord(float &x, float &y, float &z, float* ori, float* dist) const
+void Creature::GetRespawnPosition(float &x, float &y, float &z, float* ori, float* dist) const
 {
     if (m_DBTableGuid)
     {
@@ -2386,21 +2378,28 @@ const char* Creature::GetNameForLocaleIdx(LocaleConstant loc_idx) const
     return GetName();
 }
 
+//Do not if this works or not, moving creature to another map is very dangerous
 void Creature::FarTeleportTo(Map* map, float X, float Y, float Z, float O)
 {
-    InterruptNonMeleeSpells(true);
-    CombatStop();
-    ClearComboPointHolders();
-    DeleteThreatList();
-    GetMotionMaster()->Clear(false);
-    DestroyForNearbyPlayers();
-
-    RemoveFromWorld();
-    ResetMap();
+    CleanupBeforeRemoveFromMap(false);
+    GetMap()->RemoveFromMap(this, false);
+    Relocate(X, Y, Z, O);
     SetMap(map);
-    AddToWorld();
+    GetMap()->AddToMap(this);
+}
 
-    SetPosition(X, Y, Z, O, true);
+void Creature::SetPosition(float x, float y, float z, float o)
+{
+    // prevent crash when a bad coord is sent by the client
+    if (!Trinity::IsValidMapCoord(x, y, z, o))
+    {
+        sLog->outDebug(LOG_FILTER_UNITS, "Creature::SetPosition(%f, %f, %f) .. bad coordinates!", x, y, z);
+        return;
+    }
+
+    GetMap()->CreatureRelocation(ToCreature(), x, y, z, o);
+    if (IsVehicle())
+        GetVehicleKit()->RelocatePassengers(x, y, z, o);
 }
 
 bool Creature::IsDungeonBoss() const

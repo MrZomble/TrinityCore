@@ -743,8 +743,8 @@ enum RestType
 enum DuelCompleteType
 {
     DUEL_INTERRUPTED = 0,
-    DUEL_WON        = 1,
-    DUEL_FLED       = 2
+    DUEL_WON         = 1,
+    DUEL_FLED        = 2
 };
 
 enum TeleportToOptions
@@ -1257,18 +1257,18 @@ class Player : public Unit, public GridObject<Player>
         bool CanNoReagentCast(SpellInfo const* spellInfo) const;
         bool HasItemOrGemWithIdEquipped(uint32 item, uint32 count, uint8 except_slot = NULL_SLOT) const;
         bool HasItemOrGemWithLimitCategoryEquipped(uint32 limitCategory, uint32 count, uint8 except_slot = NULL_SLOT) const;
-        InventoryResult CanTakeMoreSimilarItems(Item* pItem) const { return _CanTakeMoreSimilarItems(pItem->GetEntry(), pItem->GetCount(), pItem); }
-        InventoryResult CanTakeMoreSimilarItems(uint32 entry, uint32 count) const { return _CanTakeMoreSimilarItems(entry, count, NULL); }
+        InventoryResult CanTakeMoreSimilarItems(Item* pItem) const { return CanTakeMoreSimilarItems(pItem->GetEntry(), pItem->GetCount(), pItem); }
+        InventoryResult CanTakeMoreSimilarItems(uint32 entry, uint32 count) const { return CanTakeMoreSimilarItems(entry, count, NULL); }
         InventoryResult CanStoreNewItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, uint32 item, uint32 count, uint32* no_space_count = NULL) const
         {
-            return _CanStoreItem(bag, slot, dest, item, count, NULL, false, no_space_count);
+            return CanStoreItem(bag, slot, dest, item, count, NULL, false, no_space_count);
         }
         InventoryResult CanStoreItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, Item* pItem, bool swap = false) const
         {
             if (!pItem)
                 return EQUIP_ERR_ITEM_NOT_FOUND;
             uint32 count = pItem->GetCount();
-            return _CanStoreItem(bag, slot, dest, pItem->GetEntry(), count, pItem, swap, NULL);
+            return CanStoreItem(bag, slot, dest, pItem->GetEntry(), count, pItem, swap, NULL);
 
         }
         InventoryResult CanStoreItems(Item** pItem, int count) const;
@@ -1284,8 +1284,8 @@ class Player : public Unit, public GridObject<Player>
         bool HasItemTotemCategory(uint32 TotemCategory) const;
         InventoryResult CanUseItem(ItemTemplate const* pItem) const;
         InventoryResult CanUseAmmo(uint32 item) const;
-
-        Item* StoreNewItem(ItemPosCountVec const& pos, uint32 item, bool update, int32 randomPropertyId = 0, AllowedLooterSet* allowedLooters = NULL);
+        Item* StoreNewItem(ItemPosCountVec const& pos, uint32 item, bool update, int32 randomPropertyId = 0);
+        Item* StoreNewItem(ItemPosCountVec const& pos, uint32 item, bool update, int32 randomPropertyId, AllowedLooterSet &allowedLooters);
         Item* StoreItem(ItemPosCountVec const& pos, Item* pItem, bool update);
         Item* EquipNewItem(uint16 pos, uint32 item, bool update);
         Item* EquipItem(uint16 pos, Item* pItem, bool update);
@@ -1295,8 +1295,8 @@ class Player : public Unit, public GridObject<Player>
         void AutoStoreLoot(uint32 loot_id, LootStore const& store, bool broadcast = false) { AutoStoreLoot(NULL_BAG, NULL_SLOT, loot_id, store, broadcast); }
         void StoreLootItem(uint8 lootSlot, Loot* loot);
 
-        InventoryResult _CanTakeMoreSimilarItems(uint32 entry, uint32 count, Item* pItem, uint32* no_space_count = NULL) const;
-        InventoryResult _CanStoreItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, uint32 entry, uint32 count, Item* pItem = NULL, bool swap = false, uint32* no_space_count = NULL) const;
+        InventoryResult CanTakeMoreSimilarItems(uint32 entry, uint32 count, Item* pItem, uint32* no_space_count = NULL) const;
+        InventoryResult CanStoreItem(uint8 bag, uint8 slot, ItemPosCountVec& dest, uint32 entry, uint32 count, Item* pItem = NULL, bool swap = false, uint32* no_space_count = NULL) const;
 
         void AddRefundReference(uint32 it);
         void DeleteRefundReference(uint32 it);
@@ -1952,8 +1952,8 @@ class Player : public Unit, public GridObject<Player>
         void SendResetInstanceFailed(uint32 reason, uint32 MapId);
         void SendResetFailedNotify(uint32 mapid);
 
-        virtual bool SetPosition(float x, float y, float z, float orientation, bool teleport = false);
-        bool SetPosition(const Position &pos, bool teleport = false) { return SetPosition(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation(), teleport); }
+        virtual bool UpdatePosition(float x, float y, float z, float orientation, bool teleport = false);
+        bool UpdatePosition(const Position &pos, bool teleport = false) { return UpdatePosition(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation(), teleport); }
         void UpdateUnderwaterState(Map* m, float x, float y, float z);
 
         void SendMessageToSet(WorldPacket* data, bool self) {SendMessageToSetInRange(data, GetVisibilityRange(), self); };// overwrite Object::SendMessageToSet
@@ -2341,7 +2341,7 @@ class Player : public Unit, public GridObject<Player>
 
         bool HaveAtClient(WorldObject const* u) const { return u == this || m_clientGUIDs.find(u->GetGUID()) != m_clientGUIDs.end(); }
 
-        bool isValid() const;
+        bool IsNeverVisible() const;
 
         bool IsVisibleGloballyFor(Player* pl) const;
 
@@ -2749,17 +2749,17 @@ class Player : public Unit, public GridObject<Player>
         Runes *m_runes;
         EquipmentSets m_EquipmentSets;
 
-        bool canSeeAlways(WorldObject const* obj) const;
+        bool CanAlwaysSee(WorldObject const* obj) const;
 
-        bool isAlwaysDetectableFor(WorldObject const* seer) const;
+        bool IsAlwaysDetectableFor(WorldObject const* seer) const;
 
         uint8 m_grantableLevels;
 
     private:
         // internal common parts for CanStore/StoreItem functions
-        InventoryResult _CanStoreItem_InSpecificSlot(uint8 bag, uint8 slot, ItemPosCountVec& dest, ItemTemplate const* pProto, uint32& count, bool swap, Item* pSrcItem) const;
-        InventoryResult _CanStoreItem_InBag(uint8 bag, ItemPosCountVec& dest, ItemTemplate const* pProto, uint32& count, bool merge, bool non_specialized, Item* pSrcItem, uint8 skip_bag, uint8 skip_slot) const;
-        InventoryResult _CanStoreItem_InInventorySlots(uint8 slot_begin, uint8 slot_end, ItemPosCountVec& dest, ItemTemplate const* pProto, uint32& count, bool merge, Item* pSrcItem, uint8 skip_bag, uint8 skip_slot) const;
+        InventoryResult CanStoreItem_InSpecificSlot(uint8 bag, uint8 slot, ItemPosCountVec& dest, ItemTemplate const* pProto, uint32& count, bool swap, Item* pSrcItem) const;
+        InventoryResult CanStoreItem_InBag(uint8 bag, ItemPosCountVec& dest, ItemTemplate const* pProto, uint32& count, bool merge, bool non_specialized, Item* pSrcItem, uint8 skip_bag, uint8 skip_slot) const;
+        InventoryResult CanStoreItem_InInventorySlots(uint8 slot_begin, uint8 slot_end, ItemPosCountVec& dest, ItemTemplate const* pProto, uint32& count, bool merge, Item* pSrcItem, uint8 skip_bag, uint8 skip_slot) const;
         Item* _StoreItem(uint16 pos, Item* pItem, uint32 count, bool clone, bool update);
         Item* _LoadItem(SQLTransaction& trans, uint32 zoneId, uint32 timeDiff, Field* fields);
 

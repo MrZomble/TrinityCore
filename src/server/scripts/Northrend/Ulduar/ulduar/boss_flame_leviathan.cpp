@@ -757,7 +757,7 @@ class boss_flame_leviathan_safety_container : public CreatureScript
                 me->GetPosition(x, y, z);
                 z = me->GetMap()->GetHeight(x, y, z);
                 me->GetMotionMaster()->MovePoint(0, x, y, z);
-                me->GetMap()->CreatureRelocation(me, x, y, z, 0);
+                me->SetPosition(x, y, z, 0);
             }
 
             void UpdateAI(uint32 const /*diff*/)
@@ -1680,7 +1680,8 @@ class spell_pursue : public SpellScriptLoader
             void FilterTargetsSubsequently(std::list<Unit*>& targets)
             {
                 targets.clear();
-                targets.push_back(_target);
+                if(_target)
+                    targets.push_back(_target);
             }
 
             void HandleScript(SpellEffIndex /*eff*/)
