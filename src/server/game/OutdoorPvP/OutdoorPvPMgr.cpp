@@ -177,6 +177,7 @@ bool OutdoorPvPMgr::HandleCustomSpell(Player* plr, uint32 spellId, GameObject* g
 
 ZoneScript* OutdoorPvPMgr::GetZoneScript(uint32 zoneId)
 {
+	sLog->outString("OutdoorPVPMgr: Using %u.", guid);
     OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(zoneId);
     if (itr != m_OutdoorPvPMap.end())
         return itr->second;

@@ -355,7 +355,8 @@ void OutdoorPvPHS::HandlePlayerResurrects(Player * plr, uint32 zone)
 bool OutdoorPvPHS::HandleOpenGo(Player* plr, uint64 guid)
 {
     sLog->outString("HillsbradMGR: Using %u.", guid);
-    if(GameObject* obj = plr->GetMap()->GetGameObject(guid))
+    //if(GameObject* obj = plr->GetMap()->GetGameObject(guid))
+	if(GameObject* obj = GetPlayer()->GetMap()->GetGameObject(guid))
     {
         // Is this the chest?
         if(obj->GetGUIDLow() == m_ChestGUID)
@@ -726,7 +727,7 @@ void OutdoorPvPHS::CheckSetDurnholdeMain()
 
 // Capture Points
 
-OPvPCapturePointHS::OPvPCapturePointHS(OutdoorPvP *pvp, OutdoorPvPHSTowerType type)
+OPvPCapturePointHS::OPvPCapturePointHS(OutdoorPvP* pvp, OutdoorPvPHSTowerType type)
 : OPvPCapturePoint(pvp), m_TowerType(type)
 {
     SetCapturePointData(

@@ -495,6 +495,7 @@ bool OPvPCapturePoint::HandleCustomSpell(Player* plr, uint32 /*spellId*/, GameOb
 
 bool OutdoorPvP::HandleOpenGo(Player* plr, uint64 guid)
 {
+	sLog->outString("OutdoorPVP: Using %u.", guid);
     for (OPvPCapturePointMap::iterator itr = m_capturePoints.begin(); itr != m_capturePoints.end(); ++itr)
         if (itr->second->HandleOpenGo(plr, guid) >= 0)
             return true;
