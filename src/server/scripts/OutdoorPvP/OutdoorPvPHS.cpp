@@ -74,10 +74,10 @@ bool OutdoorPvPHS::SetupOutdoorPvP()
         AddCapturePoint( cp );
         m_TowerPoints[node].capturepoint = cp->m_capturePointGUID;
         // Flag Pole... not really super important?
-        sObjectMgr->AddGOData(HSCapturePoints[node].entry, HSCapturePoints[node].map, HSCapturePoints[node].x, HSCapturePoints[node].y, HSCapturePoints[node].z - 0.2f, HSCapturePoints[node].o, 99999999999, 0, 0, 0, 0);
+        sObjectMgr->AddGOData(HSCapturePoints[node].entry, HSCapturePoints[node].map, HSCapturePoints[node].x, HSCapturePoints[node].y, HSCapturePoints[node].z - 0.2f, HSCapturePoints[node].o, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
         // Banner..
         m_TowerPoints[node].gameobject = 0;
-        if ( uint64_t guid = sObjectMgr->AddGOData(HS_CAPTURE_BANNER_0 + node, HSCapturePoints[node].map, HSCapturePoints[node].x, HSCapturePoints[node].y, HSCapturePoints[node].z - 0.2f, HSCapturePoints[node].o, 99999999999, 0, 0, 0, 0) )
+        if ( uint64_t guid = sObjectMgr->AddGOData(HS_CAPTURE_BANNER_0 + node, HSCapturePoints[node].map, HSCapturePoints[node].x, HSCapturePoints[node].y, HSCapturePoints[node].z - 0.2f, HSCapturePoints[node].o, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f) )
         {
             sLog->outString( "Hillsbrad : Spawned Banner(%llu) at node %llu.", guid, node);
             m_TowerPoints[node].gameobject = guid;
@@ -183,7 +183,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
         {
             uint32 ffachest = 0;
             ffachest = urand(0, 9);
-            if( uint64 guid = sObjectMgr->AddGOData(HSChestPoints[ffachest].entry, HSChestPoints[ffachest].map, HSChestPoints[ffachest].x, HSChestPoints[ffachest].y, HSChestPoints[ffachest].z, HSChestPoints[ffachest].o, 99999999999, 0, 0, 0, 0) )
+            if( uint64 guid = sObjectMgr->AddGOData(HSChestPoints[ffachest].entry, HSChestPoints[ffachest].map, HSChestPoints[ffachest].x, HSChestPoints[ffachest].y, HSChestPoints[ffachest].z, HSChestPoints[ffachest].o, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f) )
             {
                 sLog->outString( "Hillsbrad : Spawned Chest(%llu) at location %llu.", guid,  ffachest);
                 m_ChestGUID = guid;
