@@ -52,7 +52,8 @@ enum OutdoorPvPHSTowerType{
     HS_TOWER_NUM = 6
 };
 
-const go_type HSConquestPoints[HS_TOWER_NUM] = {
+const go_type HSConquestPoints[HS_TOWER_NUM] = 
+{
     {850000,0,-474.745361,-1373.009399,53.323555,0.174533,0,0,0.087156,0.996195},     // 0 - Lower
     {850001,0,-569.107239,-1510.894653,52.848061,0.174533,0,0,0.087156,0.996195},     // 1 - Lower East
     {850002,0,-450.357513,-1480.748779,92.521019,0.174533,0,0,0.087156,0.996195},     // 2 - Main

@@ -77,9 +77,9 @@ bool OutdoorPvPHS::SetupOutdoorPvP()
         sObjectMgr->AddGOData(HSCapturePoints[node].entry, HSCapturePoints[node].map, HSCapturePoints[node].x, HSCapturePoints[node].y, HSCapturePoints[node].z - 0.2f, HSCapturePoints[node].o, 99999999999, 0, 0, 0, 0);
         // Banner..
         m_TowerPoints[node].gameobject = 0;
-        if ( uint64 guid = sObjectMgr->AddGOData(HS_CAPTURE_BANNER_0 + node, HSCapturePoints[node].map, HSCapturePoints[node].x, HSCapturePoints[node].y, HSCapturePoints[node].z - 0.2f, HSCapturePoints[node].o, 99999999999, 0, 0, 0, 0) )
+        if ( uint64_t guid = sObjectMgr->AddGOData(HS_CAPTURE_BANNER_0 + node, HSCapturePoints[node].map, HSCapturePoints[node].x, HSCapturePoints[node].y, HSCapturePoints[node].z - 0.2f, HSCapturePoints[node].o, 99999999999, 0, 0, 0, 0) )
         {
-            sLog->outString( "Hillsbrad : Spawned Banner(%u) at node %u.", guid, node);
+            sLog->outString( "Hillsbrad : Spawned Banner(%llu) at node %llu.", guid, node);
             m_TowerPoints[node].gameobject = guid;
         }
         // Set up the other vars.
@@ -183,9 +183,9 @@ bool OutdoorPvPHS::Update(uint32 diff)
         {
             uint32 ffachest = 0;
             ffachest = urand(0, 9);
-            if( uint32 guid = sObjectMgr->AddGOData(HSChestPoints[ffachest].entry, HSChestPoints[ffachest].map, HSChestPoints[ffachest].x, HSChestPoints[ffachest].y, HSChestPoints[ffachest].z, HSChestPoints[ffachest].o, 99999999999, 0, 0, 0, 0) )
+            if( uint64_t guid = sObjectMgr->AddGOData(HSChestPoints[ffachest].entry, HSChestPoints[ffachest].map, HSChestPoints[ffachest].x, HSChestPoints[ffachest].y, HSChestPoints[ffachest].z, HSChestPoints[ffachest].o, 99999999999, 0, 0, 0, 0) )
             {
-                sLog->outString( "Hillsbrad : Spawned Chest(%u) at location %u.", guid,  ffachest);
+                sLog->outString( "Hillsbrad : Spawned Chest(%llu) at location %llu.", guid,  ffachest);
                 m_ChestGUID = guid;
                 SendMessageToAll( "FFA chest has been spawned in the fields. Good luck!" );
             }
@@ -354,9 +354,8 @@ void OutdoorPvPHS::HandlePlayerResurrects(Player * plr, uint32 zone)
 
 bool OutdoorPvPHS::HandleOpenGo(Player* plr, uint64 guid)
 {
-    sLog->outString("HillsbradMGR: Using %u.", guid);
-    //if(GameObject* obj = plr->GetMap()->GetGameObject(guid))
-	if(GameObject* obj = GetPlayer()->GetMap()->GetGameObject(guid))
+    sLog->outString("HillsbradMGR: Using %llu.", guid);
+    if(GameObject* obj = plr->GetMap()->GetGameObject(guid))
     {
         // Is this the chest?
         if(obj->GetGUIDLow() == m_ChestGUID)
