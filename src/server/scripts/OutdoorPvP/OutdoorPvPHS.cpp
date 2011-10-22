@@ -183,7 +183,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
         {
             uint32 ffachest = 0;
             ffachest = urand(0, 9);
-            if( uint64_t guid = sObjectMgr->AddGOData(HSChestPoints[ffachest].entry, HSChestPoints[ffachest].map, HSChestPoints[ffachest].x, HSChestPoints[ffachest].y, HSChestPoints[ffachest].z, HSChestPoints[ffachest].o, 99999999999, 0, 0, 0, 0) )
+            if( uint64_t guid = UINT64_C(sObjectMgr->AddGOData(HSChestPoints[ffachest].entry, HSChestPoints[ffachest].map, HSChestPoints[ffachest].x, HSChestPoints[ffachest].y, HSChestPoints[ffachest].z, HSChestPoints[ffachest].o, 99999999999, 0, 0, 0, 0)) )
             {
                 sLog->outString( "Hillsbrad : Spawned Chest(%llu) at location %llu.", guid,  ffachest);
                 m_ChestGUID = guid;
