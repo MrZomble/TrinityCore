@@ -186,10 +186,10 @@ ZoneScript* OutdoorPvPMgr::GetZoneScript(uint32 zoneId)
 
 bool OutdoorPvPMgr::HandleOpenGo(Player* plr, uint64 guid)
 {
-    sLog->outString("OutdoorPVPMgr: Using %u.", guid);
     for (OutdoorPvPSet::iterator itr = m_OutdoorPvPSet.begin(); itr != m_OutdoorPvPSet.end(); ++itr)
     {
         if ((*itr)->HandleOpenGo(plr, guid))
+		    sLog->outString("OutdoorPVPMgr: Player %u using %u.", plr, guid);
             return true;
     }
     return false;
