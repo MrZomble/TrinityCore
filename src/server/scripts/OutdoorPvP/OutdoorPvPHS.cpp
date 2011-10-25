@@ -183,11 +183,11 @@ bool OutdoorPvPHS::Update(uint32 const diff)
         {
             uint32 ffachest = 0;
             ffachest = urand(0, 9);
-            if( uint64 guid = sObjectMgr->AddGOData(HSChestPoints[ffachest].entry, HSChestPoints[ffachest].map, HSChestPoints[ffachest].x, HSChestPoints[ffachest].y, HSChestPoints[ffachest].z, HSChestPoints[ffachest].o, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f) )
+            if( uint32 guid = sObjectMgr->AddGOData(HSChestPoints[ffachest].entry, HSChestPoints[ffachest].map, HSChestPoints[ffachest].x, HSChestPoints[ffachest].y, HSChestPoints[ffachest].z, HSChestPoints[ffachest].o, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f) )
             {
-                m_ChestGUID = guid;
+                m_ChestGUID = 0;
                 SendMessageToAll( "FFA chest has been spawned in the fields. Good luck!" );
-				sLog->outString( "Hillsbrad : Spawned Chest(%u) at location %u.", m_ChestGUID,  ffachest);
+				sLog->outString( "Hillsbrad : Spawned Chest(%u) at location %u.", guid,  ffachest);
             }
             m_ChestTimer = HS_FFA_CHEST_TIMER;
         }
