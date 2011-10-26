@@ -56,12 +56,6 @@ OutdoorPvPHS::OutdoorPvPHS()
 
 bool OutdoorPvPHS::SetupOutdoorPvP()
 {
-    m_PlayerCount    = 0;
-    m_HordeCount    = 0;
-    m_AllianceCount    = 0;
-
-    m_HordeBuff = 0;
-    m_AllianceBuff = 0;
 
     m_ChestTimer = HS_FFA_CHEST_TIMER;
     m_ChestAnnounceTimer = HS_FFA_CHEST_ANNOUNCE_TIMER;
