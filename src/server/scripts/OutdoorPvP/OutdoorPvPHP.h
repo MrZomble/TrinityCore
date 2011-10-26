@@ -158,6 +158,7 @@ class OutdoorPvPHP : public OutdoorPvP
         void SetHordeTowersControlled(uint32 count);
 		
 		void ApplyZoneBalanceBuff();
+		void OnCreatureCreate(Creature* creature, bool add);
 		
 		// Resurrection System
         void SendAreaSpiritHealerQueryOpcode(Player* pl, const uint64& guid);
