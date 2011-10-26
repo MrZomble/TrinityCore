@@ -129,7 +129,7 @@ class OPvPCapturePointHS : public OPvPCapturePoint
         void HandlePlayerLeave(Player * plr);
 
     private:
-        OutdoorPvPHDTowerType m_TowerType;
+        OutdoorPvPHSTowerType m_TowerType;
 };
 
 
