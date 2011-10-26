@@ -62,7 +62,6 @@ bool OutdoorPvPHS::SetupOutdoorPvP()
     m_ChestDebugTimer = 60000;
     m_ChestGUID = 0;
 
-    m_TenacityTimer = HS_TENACITY_TIME;
     m_LastResurrectTime = 0;
 	
 	m_AllianceTowersControlled = 0;
