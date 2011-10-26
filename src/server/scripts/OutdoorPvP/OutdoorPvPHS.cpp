@@ -23,7 +23,7 @@ const uint32 HS_LANG_CAPTURE_A[HS_TOWER_NUM] = {LANG_OPVP_HP_CAPTURE_BROKENHILL_
 
 const uint32 HS_LANG_CAPTURE_H[HS_TOWER_NUM] = {LANG_OPVP_HP_CAPTURE_BROKENHILL_H, LANG_OPVP_HP_CAPTURE_OVERLOOK_H, LANG_OPVP_HP_CAPTURE_STADIUM_H};
 
-OPvPCapturePointSP::OPvPCapturePointSP(OutdoorPvP* pvp, OutdoorPvPSPTowerType type)
+OPvPCapturePointHS::OPvPCapturePointSP(OutdoorPvP* pvp, OutdoorPvPHPTowerType type)
 : OPvPCapturePoint(pvp), m_TowerType(type)
 {
     SetCapturePointData(HSCapturePoints[type].entry,
