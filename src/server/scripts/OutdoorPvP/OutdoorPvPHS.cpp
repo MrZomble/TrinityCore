@@ -7,22 +7,14 @@
 #include "OutdoorPvP.h"
 #include "WorldPacket.h"
 #include "Player.h"
-#include "Chat.h"
 #include "ObjectMgr.h"
 #include "Language.h"
 #include "World.h"
-#include <math.h>
 
-#define OPVP_HS_KCREDIT_3RDTOWER 90018
-// red H followed back to gold
-#define OPVP_HS_TS_H "|cffff0000H|cffffcc00"
-#define OPVP_HS_TS_A "|cff0098efA|cffffcc00"
-#define OPVP_HS_TS_N "|cff888888N|cffffcc00"
-#define OPVP_HS_GET_TSTATUS(n) ((m_TowerPoints[n].state == HS_CAPTURE_ALLIANCE) ? OPVP_HS_TS_A : (((m_TowerPoints[n].state == HS_CAPTURE_HORDE) ? OPVP_HS_TS_H : OPVP_HS_TS_N)));
 
 OutdoorPvPHS::OutdoorPvPHS()
 {
-    m_TypeId = OUTDOOR_PVP_HELLSCREAM;
+    m_TypeId = OUTDOOR_PVP_HS;
 }
 
 bool OutdoorPvPHS::SetupOutdoorPvP()
@@ -49,47 +41,16 @@ bool OutdoorPvPHS::SetupOutdoorPvP()
     m_TowerStateWest = 0;
     m_TowerStateMain = 0;
 
-    m_TowerAnnounceTimer = 5*60*1000;
-
     RegisterZone(HS_ZONE);
+    
+    AddCapturePoint(new OPvPCapturePointHS(this,HS_TOWER_LOWER));
 
-    //AddCapturePoint(new OPvPCapturePointHS(this,HS_TOWER_LOWER));
+    AddCapturePoint(new OPvPCapturePointHS(this,HS_TOWER_LOWER_EAST));
 
-    //AddCapturePoint(new OPvPCapturePointHS(this,HS_TOWER_LOWER_EAST));
+    AddCapturePoint(new OPvPCapturePointHS(this,HS_TOWER_MAIN));
 
-    //AddCapturePoint(new OPvPCapturePointHS(this,HS_TOWER_MAIN));
-
-    // Spawn the node shit.
-
-    OPvPCapturePoint* cp;
-
-    for (uint32 node = 0; node < HS_CAPTURE_NUM; node+=1)
-    {
-        switch( node )
-        {
-            case 0: { cp = new OPvPCapturePointHS(this,HS_CAPTURE_SOUTH); m_TowerPoints[node].name = "Southpoint"; m_TowerPoints[node].killcredit = 90015; } break;
-            case 1: { cp = new OPvPCapturePointHS(this,HS_CAPTURE_DARROW); m_TowerPoints[node].name = "Darrow Hill"; m_TowerPoints[node].killcredit = 90016; } break;
-            case 2: { cp = new OPvPCapturePointHS(this,HS_CAPTURE_NETHANDER); m_TowerPoints[node].name = "Nethander Stead"; m_TowerPoints[node].killcredit = 90017; } break;
-        }
-        AddCapturePoint( cp );
-        m_TowerPoints[node].capturepoint = cp->m_capturePointGUID;
-        // Flag Pole... not really super important?
-        objmgr.AddGOData(HSCapturePoints[node].entry, HSCapturePoints[node].map, HSCapturePoints[node].x, HSCapturePoints[node].y, HSCapturePoints[node].z - 0.2f, HSCapturePoints[node].o, 99999999999, 0, 0, 0, 0);
-        // Banner..
-        m_TowerPoints[node].gameobject = 0;
-        if ( uint64 guid = objmgr.AddGOData(HS_CAPTURE_BANNER_0 + node, HSCapturePoints[node].map, HSCapturePoints[node].x, HSCapturePoints[node].y, HSCapturePoints[node].z - 0.2f, HSCapturePoints[node].o, 99999999999, 0, 0, 0, 0) )
-        {
-            sLog->outString( "Hillsbrad : Spawned Banner(%u) at node %u.", guid, node);
-            m_TowerPoints[node].gameobject = guid;
-        }
-        // Set up the other vars.
-        m_TowerPoints[node].timer = 0;
-        m_TowerPoints[node].timerActive = false;
-        m_TowerPoints[node].state = HS_CAPTURE_NEUTRAL;
-        m_TowerPoints[node].previousState = HS_CAPTURE_NEUTRAL;
-        m_TowerPoints[node].teamIndex = 0;
-    }
     sLog->outString("HillsbradMGR : Loaded.");
+
     return true;
 }
 
@@ -173,7 +134,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
             m_ResurrectQueue.clear();
         }
     }
-
+	
     // Arena Chest System.
     // Update the timer.
 	
@@ -184,10 +145,11 @@ bool OutdoorPvPHS::Update(uint32 diff)
             uint32 ffachest = 0;
             ffachest = urand(0, 9);
             if( uint32 guid = sObjectMgr->AddGOData(HSChestPoints[ffachest].entry, HSChestPoints[ffachest].map, HSChestPoints[ffachest].x, HSChestPoints[ffachest].y, HSChestPoints[ffachest].z, HSChestPoints[ffachest].o, 99999999999, 0, 0, 0, 0) )
-            {
-                sLog->outString( "Hillsbrad : Spawned Chest(%u) at location %u.", guid,  ffachest);
+			{
+                //sLog->outString( "Hillsbrad : Spawned Chest(%u) at location %u.", guid,  ffachest);
                 m_ChestGUID = guid;
                 SendMessageToAll( "FFA chest has been spawned in the fields. Good luck!" );
+				sLog->outString( "Hillsbrad : Spawned Chest(%u) at location %u.", m_ChestGUID,  ffachest);
             }
             m_ChestTimer = HS_FFA_CHEST_TIMER;
         }
@@ -212,100 +174,49 @@ bool OutdoorPvPHS::Update(uint32 diff)
             else
                 m_ChestAnnounceTimer -= diff;
         }
-    }
-    // Chest debug.
+    } 
+    // Chest debug. 
     if( m_ChestTimer < diff )
     {
-        sLog->outString( "HillsbradMGR : Chest Guid (%u), Timer(%u), Announce Timer (%u).", m_ChestGUID, m_ChestTimer, m_ChestAnnounceTimer );
+        sLog->outString( "HillsbradMGR : Chest Guid (%u), Timer (%u), Announce Timer (%u).", m_ChestGUID, m_ChestTimer, m_ChestAnnounceTimer );
         m_ChestDebugTimer = 60000;
     }
     else
         m_ChestDebugTimer -= diff;
 	/*
-    // tower status announcement
-    if (m_TowerAnnounceTimer <= diff)
-    {
-        std::string ststatus = "";
-        std::string dhstatus = "";
-        std::string ntstatus = "";
-
-        ststatus = OPVP_HS_GET_TSTATUS(0);
-        dhstatus = OPVP_HS_GET_TSTATUS(1);
-        ntstatus = OPVP_HS_GET_TSTATUS(2);
-
-        SendMessageToAll("|cffffcc00Tower Status: Southpoint (%s), Darrow Hill (%s), Nether Stead (%s).", 
-                         ststatus.c_str(),
-                         dhstatus.c_str(),
-                         ntstatus.c_str());
-
-        m_TowerAnnounceTimer = 5*60*1000;
-    } else m_TowerAnnounceTimer -= diff;
-
-    // Capture Point Timers..
-
-    for (uint32 node = 0; node < HS_CAPTURE_NUM; node+=1)
-    {
-        if ( m_TowerPoints[node].timerActive )
-        {
-            if( m_TowerPoints[node].timer <= diff )
-            {
-                switch( m_TowerPoints[node].state )
-                {
-                    case HS_CAPTURE_ALLIANCE_CONT:
-                    {
-                        changeCapturePoint( node, HS_CAPTURE_ALLIANCE, 0 );
-                    }
-                    break;
-                    case HS_CAPTURE_HORDE_CONT:
-                    {
-                        changeCapturePoint( node, HS_CAPTURE_HORDE, 0 );
-                    }
-                    break;
-                }
-                m_TowerPoints[node].timer = 0;
-                m_TowerPoints[node].timerActive = false;
-            } else m_TowerPoints[node].timer -= diff;
-        }
-    }
-
     // Player scale checker.
     if( m_TenacityTimer <= diff )
     {
+        float ratio = 0;
         uint32 stack = 0;
-
+        
         // Reset the stack count
         m_HordeBuff = 0;
         m_AllianceBuff = 0;
-
+        
         if( m_HordeCount > 0 && m_AllianceCount > 0 )
         {
             if( m_AllianceCount > m_HordeCount )
-            {
-                if( (m_HordeCount / m_AllianceCount) > 0.1f ) 
-                    stack = floor( ( ((float)m_AllianceCount / m_HordeCount ) / 16.0f ) * 20 );
-            }
+                ratio = m_AllianceCount / m_HordeCount;
             else
-            {
-                if( (m_AllianceCount / m_HordeCount) > 0.1f ) 
-                    stack = floor( ( ((float)m_HordeCount / m_AllianceCount ) / 16.0f ) * 20 );
-                        }
+                ratio = m_HordeCount / m_AllianceCount;
         }
 
-        //stack = floor(stack + 0.5);
-        if( stack >= 1 )
+        if( ratio >= 1.25f )
         { // Buff for lower team
+            stack = ratio * ratio;
             if( stack > 20 )
                 stack = 20;
-            if( m_AllianceCount < m_HordeCount )
-                m_AllianceBuff = stack;
-            else
+            if( m_HordeCount < m_AllianceCount )
                 m_HordeBuff = stack;
+            else
+                m_AllianceBuff = stack;
         }
         // Apply the buff to players.
         ApplyZoneBalanceBuff();
         m_TenacityTimer = HS_TENACITY_TIME;
     } else
-        m_TenacityTimer -= diff;
+        m_TenacityTimer -= diff; 
 	*/
 	ApplyZoneBalanceBuff();
     return changed;
@@ -349,20 +260,20 @@ void OutdoorPvPHS::HandlePlayerLeaveZone(Player * plr, uint32 zone)
 
 void OutdoorPvPHS::HandlePlayerResurrects(Player * plr, uint32 zone)
 {
-    plr->AddAura(HS_SPELL_HONORLESS, plr);
+    plr->AddAura( HS_SPELL_HONORLESS, plr );
 }
 
 bool OutdoorPvPHS::HandleOpenGo(Player* plr, uint64 guid)
 {
-    //sLog->outString("HillsbradMGR: Using %u.", guid);
-    if( GameObject* obj = plr->GetMap()->GetGameObject( guid ) )
+    sLog->outString("HillsbradMGR: Using %u.", guid);
+    if(GameObject* obj = plr->GetMap()->GetGameObject(guid))
     {
         // Is this the chest?
-        if( obj->GetGUIDLow() == m_ChestGUID )
+        if(obj->GetGUIDLow() == m_ChestGUID)
         {
             m_ChestGUID = 0;
-            SendMessageToAll( "%s has claimed the chest! The next chest will appear in an hour.", plr->GetName() );
-            return false;
+            SendMessageToAll("%s has claimed the chest! The next chest will appear in an hour.", plr->GetName());
+            return true;
         }
 		/*
         for (uint32 node = 0; node < HS_CAPTURE_NUM; node+=1)
@@ -428,107 +339,10 @@ bool OutdoorPvPHS::HandleOpenGo(Player* plr, uint64 guid)
             }
         } */
     }
-    return false;
+    return true;
 }
 
-void OutdoorPvPHS::changeCapturePoint( uint32 node, HSCapturePointState newState, uint32 timer )
-{
-    // Set the states
-    m_TowerPoints[node].previousState = m_TowerPoints[node].state;
-    m_TowerPoints[node].state = newState;
-
-    sLog->outString("Changing node %u from %u to %u. Timer: %u", node, m_TowerPoints[node].previousState, m_TowerPoints[node].state, timer);
-    
-    if( timer > 0 )
-    {
-        m_TowerPoints[node].timer = timer;
-        m_TowerPoints[node].timerActive = true;
-    }
-    else
-        m_TowerPoints[node].timerActive = false;
-    
-    // Now, delete the old gameobject, replace with new...
-
-    if (GameObjectData const* data = objmgr.GetGOData(m_TowerPoints[node].gameobject) )
-    {
-        objmgr.RemoveGameobjectFromGrid(m_TowerPoints[node].gameobject, data);
-
-        if (GameObject* gob = sObjectAccessor.GetObjectInWorld(MAKE_NEW_GUID(m_TowerPoints[node].gameobject, data->id, HIGHGUID_GAMEOBJECT), (GameObject*)NULL))
-        {
-            uint32 guid = gob->GetDBTableGUIDLow();
-            gob->SetRespawnTime(0);                                 // not save respawn time
-            gob->Delete();
-            objmgr.DeleteGOData(guid);
-        } else
-            sLog->outString("CANNOT DELETE %u. NO OBJECT", m_TowerPoints[node].gameobject);
-    } else
-        sLog->outString("CANNOT DELETE %u. NO DATA", m_TowerPoints[node].gameobject);
-
-    uint32 banner = 0;
-    uint32 countForTeam = 0;
-
-    switch(  m_TowerPoints[node].state )
-    {
-        case HS_CAPTURE_ALLIANCE:
-            {
-                banner = 850026;
-
-                for (uint32 i = 0; i < HS_CAPTURE_NUM; ++i)
-                    if (i == node || m_TowerPoints[node].state == HS_CAPTURE_ALLIANCE )
-                        countForTeam++;
-
-                // Award alliance rep and kill credit
-                if( OPvPCapturePoint *cp = GetCapturePoint( m_TowerPoints[node].capturepoint ) )
-                {
-                    cp->RewardReputationToTeam(1050, 5, ALLIANCE);
-                    if (countForTeam == HS_CAPTURE_NUM)
-                        cp->SendObjectiveCompleteByTeam(OPVP_HS_KCREDIT_3RDTOWER, 0, ALLIANCE );
-                    cp->SendObjectiveCompleteByTeam( m_TowerPoints[node].killcredit, 0, ALLIANCE );
-                }
-
-                SendMessageToAll( "The Alliance have claimed %s tower!", m_TowerPoints[node].name.c_str() );
-                m_TowerPoints[node].teamIndex = 1;
-            }
-            break;
-        case HS_CAPTURE_ALLIANCE_CONT:
-            banner = 850027;
-            break;
-        case HS_CAPTURE_HORDE:
-            {
-                banner = 850028;
-
-                for (uint32 i = 0; i < HS_CAPTURE_NUM; ++i)
-                    if ( i == node || m_TowerPoints[node].state == HS_CAPTURE_HORDE )
-                        countForTeam++;
-
-                // Award horde rep and kill credit
-                if( OPvPCapturePoint *cp = GetCapturePoint( m_TowerPoints[node].capturepoint ) )
-                {
-                    cp->RewardReputationToTeam(1085, 5, HORDE);
-                    if (countForTeam == HS_CAPTURE_NUM)
-                        cp->SendObjectiveCompleteByTeam(OPVP_HS_KCREDIT_3RDTOWER, 0, HORDE);
-                    cp->SendObjectiveCompleteByTeam( m_TowerPoints[node].killcredit, 0, HORDE );
-                }
-
-                SendMessageToAll( "The Horde have claimed %s tower!", m_TowerPoints[node].name.c_str() );
-                m_TowerPoints[node].teamIndex = 2;
-            }
-            break;
-        case HS_CAPTURE_HORDE_CONT:
-            banner = 850029;
-            break;
-    }
-
-    // Spawn the new one..
-    m_TowerPoints[node].gameobject = 0;
-    if ( uint64 guid = objmgr.AddGOData(banner, HSCapturePoints[node].map, HSCapturePoints[node].x, HSCapturePoints[node].y, HSCapturePoints[node].z - 0.2f, HSCapturePoints[node].o, 99999999999, 0, 0, 0, 0) )
-    {
-        sLog->outString( "Hillsbrad : Spawned Banner(%u) at node %u.", guid, node);
-        m_TowerPoints[node].gameobject = guid;
-    }
-}
-
-void OutdoorPvPHS::ApplyZoneBalanceBuff()
+ void OutdoorPvPHS::ApplyZoneBalanceBuff()
 {
     //sLog->outString("HillsbradMGR : Applying Tenacity. %u (%u) Horde. %u (%u) Alliance.", m_HordeBuff, m_HordeCount, m_AllianceBuff, m_AllianceCount);
     for (int i = 0; i <= 1; ++i)
@@ -536,18 +350,18 @@ void OutdoorPvPHS::ApplyZoneBalanceBuff()
         for (PlayerSet::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr)
         {
             Player * plr = *itr;
-            {	/*
+            {
                 //plr->RemoveAurasDueToSpell( HS_SPELL_TENACITY );
-                if( plr->GetTeam() == ALLIANCE )
-                {
-                    if( m_AllianceBuff > 0 )
-                        plr->SetAuraStack( HS_SPELL_TENACITY, plr, m_AllianceBuff );
-                }
-                else
-                {
-                    if( m_HordeBuff > 0 )
-                        plr->SetAuraStack( HS_SPELL_TENACITY, plr, m_HordeBuff );
-                } */
+                // if( plr->GetTeam() == ALLIANCE )
+                // {
+                    // if( m_AllianceBuff > 0 )
+                        // plr->SetAuraStack( HS_SPELL_TENACITY, plr, m_AllianceBuff );
+                // }
+                // else
+                // {
+                    // if( m_HordeBuff > 0 )
+                        // plr->SetAuraStack( HS_SPELL_TENACITY, plr, m_HordeBuff );
+                // }
                 // New player protection, fuck a new timer... WILL ADD WHEN REQUIRED.
                 if( plr->GetTotalPlayedTime() >= 900 )
                 {
@@ -562,11 +376,11 @@ void OutdoorPvPHS::ApplyZoneBalanceBuff()
             }
         }
     }
-}
+} 
 
 // On creature spawn
 
-void OutdoorPvPHS::OnCreatureCreate(Creature* creature, bool add)
+void OutdoorPvPHS::OnCreatureCreate(Creature *creature, bool add)
 {
     //OutdoorPvP::OnCreatureCreate(creature, add);
     if ( (creature->GetEntry() == HS_CREATURE_ENTRY_A_SPIRITGUIDE || creature->GetEntry() == HS_CREATURE_ENTRY_H_SPIRITGUIDE) && creature->GetZoneId() == HS_ZONE )
@@ -581,16 +395,16 @@ void OutdoorPvPHS::OnCreatureCreate(Creature* creature, bool add)
     }
 }
 
-void OutdoorPvPHS::OnGameObjectCreate(GameObject* obj, bool add)
+void OutdoorPvPHS::OnGameObjectCreate(GameObject* go, bool add)
 {
-    if( !m_map )
-        m_map = obj->GetMap();
-    OutdoorPvP::OnGameObjectCreate(obj, add);
+
+    sLog->outString("yeap, %u added.", go->GetEntry());
+    //OutdoorPvP::OnGameObjectCreate(go, add);
 }
 
 // Resurrection System
 
-void OutdoorPvPHS::SendAreaSpiritHealerQueryOpcode(Player* pl, const uint64& guid)
+void OutdoorPvPHS::SendAreaSpiritHealerQueryOpcode(Player *pl, const uint64& guid)
 {
     WorldPacket data(SMSG_AREA_SPIRIT_HEALER_TIME, 12);
     uint32 time_ = HS_RESURRECTION_INTERVAL - GetLastResurrectTime(); // resurrect every HS_RESURRECTION_INTERVAL / 1000 seconds
@@ -615,19 +429,13 @@ void OutdoorPvPHS::RemovePlayerFromResurrectQueue(uint64 player_guid)
 {
     for (std::map<uint64, std::vector<uint64> >::iterator itr = m_ReviveQueue.begin(); itr != m_ReviveQueue.end(); ++itr)
     {
-        for (std::vector<uint64>::iterator itr2 =(itr->second).begin(); itr2 != (itr->second).end(); ++itr2)
+        for (std::vector<uint64>::iterator itr2 = (itr->second).begin(); itr2 != (itr->second).end(); ++itr2)
         {
             if (*itr2 == player_guid)
             {
                 (itr->second).erase(itr2);
-
-                Player* plr = ObjectAccessor::FindPlayer(player_guid);
-
-                if (!plr)
-                    return;
-
-                plr->RemoveAurasDueToSpell( HS_SPELL_WAITING_FOR_RESURRECT );
-
+                if (Player* plr = ObjectAccessor::FindPlayer(player_guid))
+                    plr->RemoveAurasDueToSpell(HS_SPELL_WAITING_FOR_RESURRECT);
                 return;
             }
         }
@@ -730,19 +538,19 @@ OPvPCapturePointHS::OPvPCapturePointHS(OutdoorPvP *pvp, OutdoorPvPHSTowerType ty
 : OPvPCapturePoint(pvp), m_TowerType(type)
 {
     SetCapturePointData(
-        HSConquestPoints[type].entry,
-        HSConquestPoints[type].map,
-        HSConquestPoints[type].x,
-        HSConquestPoints[type].y,
-        HSConquestPoints[type].z,
-        HSConquestPoints[type].o,
-        HSConquestPoints[type].rot0,
-        HSConquestPoints[type].rot1,
-        HSConquestPoints[type].rot2,
-        HSConquestPoints[type].rot3
+        HSCapturePoints[type].entry,
+        HSCapturePoints[type].map,
+        HSCapturePoints[type].x,
+        HSCapturePoints[type].y,
+        HSCapturePoints[type].z,
+        HSCapturePoints[type].o,
+        HSCapturePoints[type].rot0,
+        HSCapturePoints[type].rot1,
+        HSCapturePoints[type].rot2,
+        HSCapturePoints[type].rot3
     );
 
-   // RespawnVisualTower( 184382 );
+    RespawnVisualTower( 184382 );
 }
 
 bool OPvPCapturePointHS::Update(uint32 diff)
@@ -764,10 +572,11 @@ bool OPvPCapturePointHS::Update(uint32 diff)
     return /* canupdate &&  */ OPvPCapturePoint::Update(diff);
 }
 
+
 void OPvPCapturePointHS::ChangeState()
 {
 
-    //sLog->outString("%u changed states from %u to %u.", m_capturePoint->GetEntry(), m_OldState, m_State);
+    sLog->outString("%u changed states from %u to %u.", m_capturePoint->GetEntry(), m_OldState, m_State);
     
     switch( m_capturePoint->GetEntry() )
     {
@@ -963,7 +772,7 @@ void OPvPCapturePointHS::FillInitialWorldStates(WorldPacket &data)
 {
 }
 
-bool OPvPCapturePointHS::HandlePlayerEnter(Player* plr)
+bool OPvPCapturePointHS::HandlePlayerEnter(Player *plr)
 {
     sLog->outString("Hillsbrad Point : Player %u entered %u radius.", plr->GetGUIDLow(), m_capturePoint->GetEntry() );
     return OPvPCapturePoint::HandlePlayerEnter(plr);
@@ -977,7 +786,7 @@ bool OPvPCapturePointHS::HandlePlayerEnter(Player* plr)
    // return false;
 }
 
-void OPvPCapturePointHS::HandlePlayerLeave(Player* plr)
+void OPvPCapturePointHS::HandlePlayerLeave(Player *plr)
 {
     plr->SendUpdateWorldState(2473, 0);
     OPvPCapturePoint::HandlePlayerLeave(plr);
@@ -987,15 +796,15 @@ void OPvPCapturePointHS::RespawnVisualTower(uint32 entry)
 {
     DeleteSpawns();
     AddObject(m_TowerType, entry,
-    HSConquestPoints[m_TowerType].map,
-    HSConquestPoints[m_TowerType].x,
-    HSConquestPoints[m_TowerType].y,
-    HSConquestPoints[m_TowerType].z,
-    HSConquestPoints[m_TowerType].o,
-    HSConquestPoints[m_TowerType].rot0,
-    HSConquestPoints[m_TowerType].rot1,
-    HSConquestPoints[m_TowerType].rot2,
-    HSConquestPoints[m_TowerType].rot3);
+    HSCapturePoints[m_TowerType].map,
+    HSCapturePoints[m_TowerType].x,
+    HSCapturePoints[m_TowerType].y,
+    HSCapturePoints[m_TowerType].z,
+    HSCapturePoints[m_TowerType].o,
+    HSCapturePoints[m_TowerType].rot0,
+    HSCapturePoints[m_TowerType].rot1,
+    HSCapturePoints[m_TowerType].rot2,
+    HSCapturePoints[m_TowerType].rot3);
 }
 
 void OPvPCapturePointHS::DeleteSpawns()
@@ -1004,4 +813,24 @@ void OPvPCapturePointHS::DeleteSpawns()
         DelObject(i->first);
     for (std::map<uint32,uint64>::iterator i = m_Creatures.begin(); i != m_Creatures.end(); ++i)
         DelCreature(i->first);
+}
+
+class OutdoorPvP_hellscream : public OutdoorPvPScript
+{
+    public:
+
+        OutdoorPvP_hellscream()
+            : OutdoorPvPScript("outdoorpvp_hs")
+        {
+        }
+
+        OutdoorPvP* GetOutdoorPvP() const
+        {
+            return new OutdoorPvPHS();
+        }
+};
+
+void AddSC_outdoorpvp_hs()
+{
+    new OutdoorPvP_hellscream();
 }
