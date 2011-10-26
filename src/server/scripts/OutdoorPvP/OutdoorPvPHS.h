@@ -147,7 +147,7 @@ class OutdoorPvPHS : public OutdoorPvP
         bool Update(uint32 diff);
 
         void FillInitialWorldStates(WorldPacket &data);
-        void SendRemoveWorldStates(Player* player)
+        void SendRemoveWorldStates(Player* player);
 
         void HandlePlayerEnterZone(Player* plr, uint32 zone);
         void HandlePlayerLeaveZone(Player* plr, uint32 zone);
