@@ -7,11 +7,9 @@
 
 #include "OutdoorPvP.h"
 
+
 enum HS_Outdoor_Flag_SpellId
 {
-    HS_SPELL_VISUAL_REWARD_1   = 35151,
-    HS_SPELL_VISUAL_REWARD_2   = 50757,
-    HS_SPELL_VISUAL_REWARD_3   = 45311,
 
     HS_SPELL_ADRENALINE        = 68667,
 
@@ -41,69 +39,65 @@ enum HS_Creatures
 
 #define HS_ZONE          267
 
-enum OutdoorPvPHSTowerType{
-    HS_TOWER_LOWER = 0,
-    HS_TOWER_LOWER_EAST = 1,
-    HS_TOWER_MAIN = 2,
-    // Capture points for ease of use...
-    HS_CAPTURE_SOUTH    = 3,
-    HS_CAPTURE_DARROW    = 4,
-    HS_CAPTURE_NETHANDER   = 5,
-    HS_TOWER_NUM = 6
-};
-
-const go_type HSConquestPoints[HS_TOWER_NUM] = 
+enum OutdoorPvPHSSpells
 {
-    {850000,0,-474.745361,-1373.009399,53.323555,0.174533,0,0,0.087156,0.996195},     // 0 - Lower
-    {850001,0,-569.107239,-1510.894653,52.848061,0.174533,0,0,0.087156,0.996195},     // 1 - Lower East
-    {850002,0,-450.357513,-1480.748779,92.521019,0.174533,0,0,0.087156,0.996195},     // 2 - Main
-    // AB capture system.
-    {850030,0,-659.569298,412.013489,83.357964,3.746807,0,0,0,0},                     // 0 - Southpoint Tower
-    {850031,0,-323.441711,-698.090149,57.967308,1.92390,0,0,0,0},                     // 1 - Darrow Hill Tower
-    {850032,0,-622.047485,-1045.131592,65.926140,3.309312,0,0,0}                     // 2 - Nethander Stead Tower
+    AlliancePlayerKillReward = 32155,
+    HordePlayerKillReward = 32158,
+    AllianceBuff = 32071,
+    HordeBuff = 32049
 };
 
-// Tower Capture.
-
-enum OutdoorPvPHSCaptureType{
-    HS_CAPTURE_NUM = 3
+enum OutdoorPvPHSTowerType
+{
+    HS_TOWER_SOUTH = 0,
+    HS_TOWER_DARROW = 1,
+    HS_TOWER_NETHANDER = 2,
+    HS_TOWER_NUM = 3
 };
+
+const uint32 HS_CREDITMARKER[HS_TOWER_NUM] = {19032, 19028, 19029};
+
+const uint32 HS_CapturePointEvent_Enter[HS_TOWER_NUM] = {11404, 11396, 11388};
+
+const uint32 HS_CapturePointEvent_Leave[HS_TOWER_NUM] = {11403, 11395, 11387};
+
+enum OutdoorPvPHPWorldStates
+{
+    HS_UI_TOWER_DISPLAY_A = 0x9ba,
+    HS_UI_TOWER_DISPLAY_H = 0x9b9,
+
+    HS_UI_TOWER_COUNT_H = 0x9ae,
+    HS_UI_TOWER_COUNT_A = 0x9ac,
+
+    HS_UI_TOWER_SLIDER_N = 2475,
+    HS_UI_TOWER_SLIDER_POS = 2474,
+    HS_UI_TOWER_SLIDER_DISPLAY = 2473
+};
+
+const uint32 HS_MAP_N[HS_TOWER_NUM] = {0x9b5, 0x9b2, 0x9a8};
+
+const uint32 HS_MAP_A[HS_TOWER_NUM] = {0x9b3, 0x9b0, 0x9a7};
+
+const uint32 HS_MAP_H[HS_TOWER_NUM] = {0x9b4, 0x9b1, 0x9a6};
+
+const uint32 HS_TowerArtKit_A[HS_TOWER_NUM] = {65, 62, 67};
+
+const uint32 HS_TowerArtKit_H[HS_TOWER_NUM] = {64, 61, 68};
+
+const uint32 HS_TowerArtKit_N[HS_TOWER_NUM] = {66, 63, 69};
 
 const go_type HSCapturePoints[HS_TOWER_NUM] =
 {
-    {850000,0,-474.745361f,-1373.009399f,53.323555f,0.174533f,0.0f,0.0f,0.087156f,0.996195f},     // 0 - Lower
-    {850001,0,-569.107239f,-1510.894653f,52.848061f,0.174533f,0.0f,0.0f,0.087156f,0.996195f},     // 1 - Lower East
-    {850002,0,-450.357513f,-1480.748779f,92.521019f,0.174533f,0.0f,0.0f,0.087156f,0.996195f}     // 2 - Main
+    {182175, 0, -659.569f, 412.013f, 83.3579f, 3.746807f, 0.0f, 0.0f, 0.087156f, 0.996195f},      // 0 - Southpoint Tower
+    {182174, 0, -323.441f, -698.09f, 57.9673f, 1.92390f, 0.0f, 0.0f, 0.008727f, -0.999962f},      // 1 - Darrow Hill Tower
+    {182173, 0, -622.047f, -1045.131f, 65.926140f, 3.309312f, 0.0f, 0.0f, 0.017452f, 0.999848f}   // 2 - Nethander Stead Tower
 };
 
-enum HSCaptureObjectId
+const go_type HSTowerFlags[HS_TOWER_NUM] =
 {
-    HS_CAPTURE_BANNER_0    = 850023,       // Southpoint banner
-    HS_CAPTURE_BANNER_1    = 850024,       // Darrow Hill banner
-    HS_CAPTURE_BANNER_2    = 850025,       // Nethander Stead banner
-};
-
-enum HSCapturePointState
-{
-    HS_CAPTURE_NEUTRAL       = 0,
-    HS_CAPTURE_ALLIANCE      = 1,
-    HS_CAPTURE_ALLIANCE_CONT = 2,
-    HS_CAPTURE_HORDE         = 3,
-    HS_CAPTURE_HORDE_CONT    = 4
-};
-
-struct HSCapturePoint
-{
-    uint64      gameobject;
-    uint32      timer;
-    bool        timerActive;
-    bool        locked;
-    HSCapturePointState state;
-    HSCapturePointState previousState;
-    uint8       teamIndex;
-    uint32      capturepoint;
-    std::string name;
-    uint32      killcredit;
+    {183515, 0, -677.897f, -426.711f, 25.766f, 0.10695f, 0.0f, 0.0f, 1.0f, 0.0f},              // 0 - Southpoint Tower
+    {183515, 0, -339.712f, -708.957f, 54.033f, 4.45808f, 0.0f, 0.0f, 0.999962f, 0.008727f},    // 1 - Darrow Hill Tower
+    {183515, 0, -606.495f, -1064.064f, 56.5104f, 5.86003f, 0.0f, 0.0f, 0.999962f, -0.008727f}  // 2 - Nethander Stead Tower
 };
 
 // FFA Chest Spawns.
@@ -124,22 +118,22 @@ const go_type HSChestPoints[10] = {
 class OPvPCapturePointHS : public OPvPCapturePoint
 {
     public:
-        OPvPCapturePointHS(OutdoorPvP * pvp, OutdoorPvPHSTowerType type);
+        OPvPCapturePointHS(OutdoorPvP* pvp, OutdoorPvPHSTowerType type);
         bool Update(uint32 diff);
         void ChangeState();
         void SendChangePhase();
         void FillInitialWorldStates(WorldPacket & data);
-        // used when player is activated/inactivated in the area
+        
+		// used when player is activated/inactivated in the area
         bool HandlePlayerEnter(Player * plr);
         void HandlePlayerLeave(Player * plr);
 
-        void RespawnVisualTower(uint32 entry);
-
-        void DeleteSpawns();
     private:
-        OutdoorPvPHSTowerType m_TowerType;
-        bool m_locked;
+        OutdoorPvPHDTowerType m_TowerType;
 };
+
+
+
 
 class OutdoorPvPHS : public OutdoorPvP
 {
@@ -153,14 +147,12 @@ class OutdoorPvPHS : public OutdoorPvP
         bool Update(uint32 diff);
 
         void FillInitialWorldStates(WorldPacket &data);
-        void SendRemoveWorldStates(Player * plr);
+        void SendRemoveWorldStates(Player* player)
 
         void HandlePlayerEnterZone(Player* plr, uint32 zone);
         void HandlePlayerLeaveZone(Player* plr, uint32 zone);
         void HandlePlayerResurrects(Player * plr, uint32 zone);
-    //  void HandleKill(Player * plr, Unit * killed);
         bool HandleOpenGo(Player* plr, uint64 guid);
-    //  bool HandleDropFlag(Player * plr, uint32 spellId);
 
         void changeCapturePoint( uint32 node, HSCapturePointState newState, uint32 timer );
 
@@ -168,17 +160,7 @@ class OutdoorPvPHS : public OutdoorPvP
 
         void OnGameObjectCreate(GameObject* obj, bool add);
         void OnCreatureCreate(Creature* creature, bool add);
-
-    //  void RewardItem(Player *plr, uint32 item_id, uint32 count);
-
-    //  void UpdateFlagPosition(float x, float y, bool carrier);
-    //  void UpdateFlagPoI(Player *plr);
-    //  void PlaySoundToAll(uint32 SoundID, bool carrier );
-    //  void SendPacketToAll(WorldPacket *packet, bool carrier );
         void SendMessageToAll( const char *format, ... );
-    //  void SendMessageToCarrier( const char *format, ... );
-
-    //  uint64& GetFlagHolderGUID() { return m_FlagHolderGUID; }
 
         // Resurrection System
         void SendAreaSpiritHealerQueryOpcode(Player* pl, const uint64& guid);
@@ -187,6 +169,15 @@ class OutdoorPvPHS : public OutdoorPvP
 
         void CheckSetDurnholdeMain();
         void SetJustCaptured(uint32 team);
+		
+		// tower cap system
+        void HandleKillImpl(Player* player, Unit* killed);
+
+        uint32 GetAllianceTowersControlled() const;
+        void SetAllianceTowersControlled(uint32 count);
+
+        uint32 GetHordeTowersControlled() const;
+        void SetHordeTowersControlled(uint32 count);
 
     private:
 
@@ -204,27 +195,11 @@ class OutdoorPvPHS : public OutdoorPvP
         uint32 m_ChestTimer;
         uint32 m_ChestAnnounceTimer;
         uint32 m_ChestDebugTimer;
+		
+		// how many towers are controlled
+        uint32 m_AllianceTowersControlled;
+        uint32 m_HordeTowersControlled;
 
-        // Tower Capture System
-        HSCapturePoint   m_TowerPoints[HS_CAPTURE_NUM];
-
-        // Timers.
-        uint32 m_TenacityTimer;
-        uint32 m_TowerAnnounceTimer;
-        // Count.
-        uint32 m_PlayerCount;
-        uint32 m_HordeCount;
-        uint32 m_AllianceCount;
-
-        uint32 m_HordeBuff;
-        uint32 m_AllianceBuff;
-
-        // Durnholde
-        uint32 m_DurnholdeOwner;
-        uint32 m_DurnholdeLockout;
-
-        // Durnholde Towers.
-        uint16 m_TowerStateMain, m_TowerStateEast, m_TowerStateWest;
 
         Map * m_map;
 };
