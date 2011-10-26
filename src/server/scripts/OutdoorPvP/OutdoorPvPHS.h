@@ -154,8 +154,6 @@ class OutdoorPvPHS : public OutdoorPvP
         void HandlePlayerResurrects(Player * plr, uint32 zone);
         bool HandleOpenGo(Player* plr, uint64 guid);
 
-        void changeCapturePoint( uint32 node, HSCapturePointState newState, uint32 timer );
-
         void ApplyZoneBalanceBuff();
 
         void OnGameObjectCreate(GameObject* obj, bool add);
@@ -166,9 +164,6 @@ class OutdoorPvPHS : public OutdoorPvP
         void SendAreaSpiritHealerQueryOpcode(Player* pl, const uint64& guid);
         void AddPlayerToResurrectQueue(uint64 npc_guid, uint64 player_guid);
         void RemovePlayerFromResurrectQueue(uint64 player_guid);
-
-        void CheckSetDurnholdeMain();
-        void SetJustCaptured(uint32 team);
 		
 		// tower cap system
         void HandleKillImpl(Player* player, Unit* killed);
