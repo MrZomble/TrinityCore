@@ -88,12 +88,16 @@ void OutdoorPvPHP::HandlePlayerEnterZone(Player* player, uint32 zone)
     {
         if (m_AllianceTowersControlled >=3)
             player->CastSpell(player, AllianceBuff, true);
+			player->CastSpell(player, 68652, true); // 50% honor increase
     }
     else
     {
         if (m_HordeTowersControlled >=3)
             player->CastSpell(player, HordeBuff, true);
+			player->CastSpell(player, 68652, true); // 50% honor increase
     }
+	// Just in case. Make them honorless.
+    player->AddAura( HP_SPELL_HONORLESS, player );
     OutdoorPvP::HandlePlayerEnterZone(player, zone);
 }
 
@@ -103,10 +107,13 @@ void OutdoorPvPHP::HandlePlayerLeaveZone(Player* player, uint32 zone)
     if (player->GetTeam() == ALLIANCE)
     {
         player->RemoveAurasDueToSpell(AllianceBuff);
+		player->RemoveAurasDueToSpell(68652);
+		
     }
     else
     {
         player->RemoveAurasDueToSpell(HordeBuff);
+		player->RemoveAurasDueToSpell(68652);
     }
     OutdoorPvP::HandlePlayerLeaveZone(player, zone);
 }
@@ -118,17 +125,167 @@ bool OutdoorPvPHP::Update(uint32 diff)
     {
         if (m_AllianceTowersControlled == 3)
             TeamApplyBuff(TEAM_ALLIANCE, AllianceBuff, HordeBuff);
+			TeamCastSpell(TEAM_ALLIANCE, 68652);
+            TeamCastSpell(TEAM_HORDE, -68652);
         else if (m_HordeTowersControlled == 3)
             TeamApplyBuff(TEAM_HORDE, HordeBuff, AllianceBuff);
+			TeamCastSpell(TEAM_HORDE, 68652);
+            TeamCastSpell(TEAM_ALLIANCE, -68652);
         else
         {
             TeamCastSpell(TEAM_ALLIANCE, -AllianceBuff);
             TeamCastSpell(TEAM_HORDE, -HordeBuff);
+			TeamCastSpell(TEAM_ALLIANCE, -68652);
+            TeamCastSpell(TEAM_HORDE, -68652);
         }
         SendUpdateWorldState(HP_UI_TOWER_COUNT_A, m_AllianceTowersControlled);
         SendUpdateWorldState(HP_UI_TOWER_COUNT_H, m_HordeTowersControlled);
     }
+	
+	// Resurrection System
+    m_LastResurrectTime += diff;
+    if (m_LastResurrectTime >= HP_RESURRECTION_INTERVAL)
+    {
+        //sLog->outString("HillsbradMGR : Reviving...");
+        if ( GetReviveQueueSize() )
+        {
+            sLog->outString("HellfireMGR : Dead players in queue.");
+            for (std::map<uint64, std::vector<uint64> >::iterator itr = m_ReviveQueue.begin(); itr != m_ReviveQueue.end(); ++itr)
+            {
+                Creature* sh = NULL;
+                for (std::vector<uint64>::const_iterator itr2 = (itr->second).begin(); itr2 != (itr->second).end(); ++itr2)
+                {
+                    Player* plr = ObjectAccessor::FindPlayer(*itr2);
+                    if (!plr)
+                        continue;
+
+                    if (!sh && plr->IsInWorld())
+                    {
+                        sh = plr->GetMap()->GetCreature(itr->first);
+                        // only for visual effect
+                        if (sh)
+                            // Spirit Heal, effect 117
+                            sh->CastSpell(sh, HP_SPELL_SPIRIT_HEAL, true);
+                    }
+
+                    // Resurrection visual
+                    plr->CastSpell(plr, HP_SPELL_RESURRECTION_VISUAL, true);
+                    m_ResurrectQueue.push_back(*itr2);
+                }
+                (itr->second).clear();
+            }
+            m_ReviveQueue.clear();
+        }
+        // Reset last resurrection time
+        m_LastResurrectTime = 0;
+    }
+    else if (m_LastResurrectTime > 500) // Resurrect players only half a second later
+    {
+        if ( GetResurrectQueueSize() )
+        {
+            //sLog->outString("HillsbradMGR : Resurrecting...");
+            for (std::vector<uint64>::const_iterator itr = m_ResurrectQueue.begin(); itr != m_ResurrectQueue.end(); ++itr)
+            {
+                Player* plr = ObjectAccessor::FindPlayer(*itr);
+                if (!plr)
+                    continue;
+                plr->ResurrectPlayer(1.0f, false);
+                plr->CastSpell(plr, 6962, true);
+                plr->CastSpell(plr, HP_SPELL_SPIRIT_HEAL_MANA, true);
+                sObjectAccessor->ConvertCorpseForPlayer(*itr);
+            }
+            m_ResurrectQueue.clear();
+        }
+    }
+	ApplyZoneBalanceBuff();
     return changed;
+}
+
+void OutdoorPvPHP::HandlePlayerResurrects(Player* plr, uint32 zone)
+{
+    plr->AddAura(HP_SPELL_HONORLESS, plr);
+}
+
+void OutdoorPvPHP::ApplyZoneBalanceBuff()
+{
+    for (int i = 0; i <= 1; ++i)
+    {
+        for (PlayerSet::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr)
+        {
+            Player * plr = *itr;
+            {	
+                if( plr->GetTotalPlayedTime() >= 900 )
+                {
+                    if ( plr->HasByteFlag( UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY ) )
+                        plr->RemoveByteFlag( UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY );
+                }
+                else
+                {
+                    plr->SetByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY);
+                    plr->CombatStopWithPets();
+                }
+            }
+        }
+    }
+}
+
+void OutdoorPvPHP::OnCreatureCreate(Creature* creature, bool add)
+{
+    //OutdoorPvP::OnCreatureCreate(creature, add);
+    if ( (creature->GetEntry() == HP_CREATURE_ENTRY_A_SPIRITGUIDE || creature->GetEntry() == HP_CREATURE_ENTRY_H_SPIRITGUIDE) && creature->GetZoneId() == OutdoorPvPHPBuffZones[0] )
+    {
+        if (add)
+        {
+            creature->setDeathState(DEAD);
+            creature->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, creature->GetGUID());
+            creature->SetUInt32Value(UNIT_CHANNEL_SPELL, HP_SPELL_SPIRIT_HEAL_CHANNEL);
+            creature->SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);
+        }
+    }
+}
+
+void OutdoorPvPHP::SendAreaSpiritHealerQueryOpcode(Player* pl, const uint64& guid)
+{
+    WorldPacket data(SMSG_AREA_SPIRIT_HEALER_TIME, 12);
+    uint32 time_ = HP_RESURRECTION_INTERVAL - GetLastResurrectTime(); // resurrect every HP_RESURRECTION_INTERVAL / 1000 seconds
+    if (time_ == uint32(-1))
+        time_ = 0;
+    data << guid << time_;
+    pl->GetSession()->SendPacket(&data);
+}
+
+void OutdoorPvPHP::AddPlayerToResurrectQueue(uint64 npc_guid, uint64 player_guid)
+{
+    m_ReviveQueue[npc_guid].push_back(player_guid);
+
+    Player* plr = ObjectAccessor::FindPlayer(player_guid);
+    if (!plr)
+        return;
+
+    plr->CastSpell(plr, HP_SPELL_WAITING_FOR_RESURRECT, true);
+}
+
+void OutdoorPvPHP::RemovePlayerFromResurrectQueue(uint64 player_guid)
+{
+    for (std::map<uint64, std::vector<uint64> >::iterator itr = m_ReviveQueue.begin(); itr != m_ReviveQueue.end(); ++itr)
+    {
+        for (std::vector<uint64>::iterator itr2 =(itr->second).begin(); itr2 != (itr->second).end(); ++itr2)
+        {
+            if (*itr2 == player_guid)
+            {
+                (itr->second).erase(itr2);
+
+                Player* plr = ObjectAccessor::FindPlayer(player_guid);
+
+                if (!plr)
+                    return;
+
+                plr->RemoveAurasDueToSpell( HP_SPELL_WAITING_FOR_RESURRECT );
+
+                return;
+            }
+        }
+    }
 }
 
 void OutdoorPvPHP::SendRemoveWorldStates(Player* player)
@@ -331,9 +488,9 @@ void OutdoorPvPHP::HandleKillImpl(Player* player, Unit* killed)
     if (killed->GetTypeId() != TYPEID_PLAYER)
         return;
 
-    if (player->GetTeam() == ALLIANCE && killed->ToPlayer()->GetTeam() != ALLIANCE)
+    if (player->GetTeam() == ALLIANCE && killed->ToPlayer()->GetTeam() != ALLIANCE && !player->HasAura(2479))
         player->CastSpell(player, AlliancePlayerKillReward, true);
-    else if (player->GetTeam() == HORDE && killed->ToPlayer()->GetTeam() != HORDE)
+    else if (player->GetTeam() == HORDE && killed->ToPlayer()->GetTeam() != HORDE && !player->HasAura(2479))
         player->CastSpell(player, HordePlayerKillReward, true);
 }
 

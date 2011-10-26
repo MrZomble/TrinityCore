@@ -24,6 +24,31 @@
                                                          //  HP, citadel, ramparts, blood furnace, shattered halls, mag's lair
 const uint32 OutdoorPvPHPBuffZones[OutdoorPvPHPBuffZonesNum] = { 3483, 3563, 3562, 3713, 3714, 3836 };
 
+enum HP_Outdoor_Flag_SpellId
+{
+    HP_SPELL_HONORLESS         = 2479,
+
+    HP_SPELL_WAITING_FOR_RESURRECT     = 2584,                 // Waiting to Resurrect
+    HP_SPELL_SPIRIT_HEAL_CHANNEL       = 22011,                // Spirit Heal Channel
+    HP_SPELL_SPIRIT_HEAL               = 22012,                // Spirit Heal
+    HP_SPELL_RESURRECTION_VISUAL       = 24171,                // Resurrection Impact Visual
+    HP_SPELL_SPIRIT_HEAL_MANA          = 44535,                // Spirit Heal
+};
+
+enum HP_Timers
+{
+    HP_TENACITY_TIME                    = 60000,
+    HP_RESURRECTION_INTERVAL            = 30000,
+    HP_FFA_CHEST_TIMER                  = 3600000,
+    HP_FFA_CHEST_ANNOUNCE_TIMER         = 1000,
+};
+
+enum HP_Creatures
+{
+    HP_CREATURE_ENTRY_A_SPIRITGUIDE     = 13116,           // alliance
+    HP_CREATURE_ENTRY_H_SPIRITGUIDE     = 13117,           // horde
+};
+
 enum OutdoorPvPHPSpells
 {
     AlliancePlayerKillReward = 32155,
@@ -116,6 +141,7 @@ class OutdoorPvPHP : public OutdoorPvP
 
         void HandlePlayerEnterZone(Player* player, uint32 zone);
         void HandlePlayerLeaveZone(Player* player, uint32 zone);
+		void HandlePlayerResurrects(Player* plr, uint32 zone);
 
         bool Update(uint32 diff);
 
@@ -130,12 +156,27 @@ class OutdoorPvPHP : public OutdoorPvP
 
         uint32 GetHordeTowersControlled() const;
         void SetHordeTowersControlled(uint32 count);
+		
+		void ApplyZoneBalanceBuff();
+		
+		// Resurrection System
+        void SendAreaSpiritHealerQueryOpcode(Player* pl, const uint64& guid);
+        void AddPlayerToResurrectQueue(uint64 npc_guid, uint64 player_guid);
+        void RemovePlayerFromResurrectQueue(uint64 player_guid);
 
     private:
 
         // how many towers are controlled
         uint32 m_AllianceTowersControlled;
         uint32 m_HordeTowersControlled;
+		
+		// Resurrection System
+        std::vector<uint64> m_ResurrectQueue;
+        uint32 m_LastResurrectTime;
+        std::map<uint64, std::vector<uint64> >  m_ReviveQueue;
+        uint32 GetLastResurrectTime() const { return m_LastResurrectTime; }
+        uint32 GetReviveQueueSize() const { return m_ReviveQueue.size(); }
+        uint32 GetResurrectQueueSize() const { return m_ResurrectQueue.size(); }
 };
 
 #endif
