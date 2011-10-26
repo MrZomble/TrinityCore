@@ -2851,7 +2851,7 @@ void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode
     {
         // allow flying
         WorldPacket data;
-        if (apply && (!plr->GetAreaID() == 3483))
+        if (apply && (!target->GetAreaID() == 3483))
         {
             static_cast<Player*>(target)->SetCanFly(true);
             static_cast<Player*>(target)->m_anti_BeginFallZ=INVALID_HEIGHT;
@@ -3260,7 +3260,7 @@ void AuraEffect::HandleAuraModIncreaseFlightSpeed(AuraApplication const* aurApp,
             if (Player* plr = target->m_movedPlayer)
             {
                 WorldPacket data;
-                if (apply && (!plr->GetAreaID() == 3483))
+                if (apply && (!target->GetAreaID() == 3483))
                 {
                     static_cast<Player*>(target)->SetCanFly(true);
                     data.Initialize(SMSG_MOVE_SET_CAN_FLY, 12);
