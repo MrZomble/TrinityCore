@@ -124,13 +124,17 @@ bool OutdoorPvPHP::Update(uint32 diff)
     if (changed)
     {
         if (m_AllianceTowersControlled == 3)
+		{
             TeamApplyBuff(TEAM_ALLIANCE, AllianceBuff, HordeBuff);
 			TeamCastSpell(TEAM_ALLIANCE, 68652);
             TeamCastSpell(TEAM_HORDE, -68652);
+		}
         else if (m_HordeTowersControlled == 3)
+		{
             TeamApplyBuff(TEAM_HORDE, HordeBuff, AllianceBuff);
 			TeamCastSpell(TEAM_HORDE, 68652);
             TeamCastSpell(TEAM_ALLIANCE, -68652);
+		}
         else
         {
             TeamCastSpell(TEAM_ALLIANCE, -AllianceBuff);
