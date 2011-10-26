@@ -7,6 +7,9 @@
 
 #include "OutdoorPvP.h"
 
+#define OutdoorPvPHSBuffZonesNum 1
+                                                         //  HP, citadel, ramparts, blood furnace, shattered halls, mag's lair
+const uint32 OutdoorPvPHSBuffZones[OutdoorPvPHSBuffZonesNum] = { 267 };
 
 enum HS_Outdoor_Flag_SpellId
 {
