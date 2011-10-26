@@ -159,7 +159,7 @@ class OutdoorPvPHS : public OutdoorPvP
 
         void ApplyZoneBalanceBuff();
 
-        void OnGameObjectCreate(GameObject* obj, bool add);
+        //void OnGameObjectCreate(GameObject* obj, bool add);
         void OnCreatureCreate(Creature* creature, bool add);
         void SendMessageToAll( const char *format, ... );
 

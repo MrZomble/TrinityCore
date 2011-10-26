@@ -405,12 +405,12 @@ void OutdoorPvPHS::OnCreatureCreate(Creature* creature, bool add)
     }
 }
 
-void OutdoorPvPHS::OnGameObjectCreate(GameObject* obj, bool add)
-{
-    if( !m_map )
-        m_map = obj->GetMap();
-    OutdoorPvP::OnGameObjectCreate(obj, add);
-}
+//void OutdoorPvPHS::OnGameObjectCreate(GameObject* obj, bool add)
+//{
+//   if( !m_map )
+//        m_map = obj->GetMap();
+//    OutdoorPvP::OnGameObjectCreate(obj, add);
+//}
 
 // Resurrection System
 
