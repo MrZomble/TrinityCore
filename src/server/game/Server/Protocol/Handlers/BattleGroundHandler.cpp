@@ -35,6 +35,7 @@
 #include "OutdoorPvP.h"
 #include "OutdoorPvPMgr.h"
 #include "../../../../scripts/OutdoorPvP/OutdoorPvPHS.h"
+#include "../../../../scripts/OutdoorPvP/OutdoorPvPHP.h"
 #include "DisableMgr.h"
 #include "Group.h"
 
@@ -627,6 +628,13 @@ void WorldSession::HandleAreaSpiritHealerQueueOpcode(WorldPacket & recv_data)
             OutdoorPvPHS *pvpHS = (OutdoorPvPHS*)sOutdoorPvPMgr->GetOutdoorPvPToZoneId( 267 );
             if (pvpHS)
                 pvpHS->AddPlayerToResurrectQueue( guid, _player->GetGUID() );
+        }
+		
+		if ( GetPlayer()->GetZoneId() == 3483 )
+        {
+            OutdoorPvPHP *pvpHP = (OutdoorPvPHP*)sOutdoorPvPMgr->GetOutdoorPvPToZoneId( 3483 );
+            if (pvpHP)
+                pvpHP->AddPlayerToResurrectQueue( guid, _player->GetGUID() );
         }
 	}
 
