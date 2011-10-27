@@ -88,13 +88,13 @@ void OutdoorPvPHP::HandlePlayerEnterZone(Player* player, uint32 zone)
     {
         if (m_AllianceTowersControlled >=3)
             player->CastSpell(player, AllianceBuff, true);
-			player->CastSpell(player, 68652, true); // 50% honor increase
+			player->CastSpell(player, HonorBuff, true); // 50% honor increase
     }
     else
     {
         if (m_HordeTowersControlled >=3)
             player->CastSpell(player, HordeBuff, true);
-			player->CastSpell(player, 68652, true); // 50% honor increase
+			player->CastSpell(player, HonorBuff, true); // 50% honor increase
     }
 	// Just in case. Make them honorless.
     player->AddAura( HP_SPELL_HONORLESS, player );
@@ -107,13 +107,13 @@ void OutdoorPvPHP::HandlePlayerLeaveZone(Player* player, uint32 zone)
     if (player->GetTeam() == ALLIANCE)
     {
         player->RemoveAurasDueToSpell(AllianceBuff);
-		player->RemoveAurasDueToSpell(68652);
+		player->RemoveAurasDueToSpell(HonorBuff);
 		
     }
     else
     {
         player->RemoveAurasDueToSpell(HordeBuff);
-		player->RemoveAurasDueToSpell(68652);
+		player->RemoveAurasDueToSpell(HonorBuff);
     }
     OutdoorPvP::HandlePlayerLeaveZone(player, zone);
 }
@@ -126,21 +126,21 @@ bool OutdoorPvPHP::Update(uint32 diff)
         if (m_AllianceTowersControlled == 3)
 		{
             TeamApplyBuff(TEAM_ALLIANCE, AllianceBuff, HordeBuff);
-			TeamCastSpell(TEAM_ALLIANCE, 68652);
-            TeamCastSpell(TEAM_HORDE, -68652);
+			TeamCastSpell(TEAM_ALLIANCE, HonorBuff);
+            TeamCastSpell(TEAM_HORDE, -HonorBuff);
 		}
         else if (m_HordeTowersControlled == 3)
 		{
             TeamApplyBuff(TEAM_HORDE, HordeBuff, AllianceBuff);
-			TeamCastSpell(TEAM_HORDE, 68652);
-            TeamCastSpell(TEAM_ALLIANCE, -68652);
+			TeamCastSpell(TEAM_HORDE, HonorBuff);
+            TeamCastSpell(TEAM_ALLIANCE, -HonorBuff);
 		}
         else
         {
             TeamCastSpell(TEAM_ALLIANCE, -AllianceBuff);
             TeamCastSpell(TEAM_HORDE, -HordeBuff);
-			TeamCastSpell(TEAM_ALLIANCE, -68652);
-            TeamCastSpell(TEAM_HORDE, -68652);
+			TeamCastSpell(TEAM_ALLIANCE, -HonorBuff);
+            TeamCastSpell(TEAM_HORDE, -HonorBuff);
         }
         SendUpdateWorldState(HP_UI_TOWER_COUNT_A, m_AllianceTowersControlled);
         SendUpdateWorldState(HP_UI_TOWER_COUNT_H, m_HordeTowersControlled);

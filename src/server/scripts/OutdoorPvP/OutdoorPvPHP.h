@@ -54,7 +54,8 @@ enum OutdoorPvPHPSpells
     AlliancePlayerKillReward = 32155,
     HordePlayerKillReward = 32158,
     AllianceBuff = 32071,
-    HordeBuff = 32049
+    HordeBuff = 32049,
+	HonorBuff = 66157
 };
 
 enum OutdoorPvPHPTowerType
