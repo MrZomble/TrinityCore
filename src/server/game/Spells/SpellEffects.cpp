@@ -4655,7 +4655,7 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                     if (canFly && v_map == 571 && !unitTarget->ToPlayer()->HasSpell(54197))
                         canFly = false;
 										
-					if (unitTarget->GetZoneId() = 3483)
+					if (unitTarget->GetZoneId() == 3483)
 						canFly = false;
 					
                     float x, y, z;
