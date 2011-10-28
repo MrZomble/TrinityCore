@@ -5367,6 +5367,11 @@ SpellCastResult Spell::CheckCast(bool strict)
                 break;
             }
             case SPELL_AURA_FLY:
+			{
+				if (m_caster->GetAreaID() == 3483)
+					return SPELL_FAILED_NO_MOUNTS_ALLOWED;
+			}					
+					
             case SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED:
             {
                 // not allow cast fly spells if not have req. skills  (all spells is self target)
@@ -5374,7 +5379,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (m_originalCaster && m_originalCaster->GetTypeId() == TYPEID_PLAYER && m_originalCaster->isAlive())
                 {
                     if (AreaTableEntry const* pArea = GetAreaEntryByAreaID(m_originalCaster->GetAreaId()))
-                        if (pArea->flags & AREA_FLAG_NO_FLY_ZONE || (m_originalCaster->GetAreaId() == 3483))
+                        if (pArea->flags & AREA_FLAG_NO_FLY_ZONE)
                             return (_triggeredCastFlags & TRIGGERED_DONT_REPORT_CAST_ERROR) ? SPELL_FAILED_DONT_REPORT : SPELL_FAILED_NOT_HERE;
                 }
                 break;
