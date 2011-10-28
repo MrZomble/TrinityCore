@@ -5368,7 +5368,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             }
             case SPELL_AURA_FLY:
 			{
-				if (m_caster->GetAreaID() == 3483)
+				if (m_originalCaster->GetAreaID() == 3483)
 					return SPELL_FAILED_NO_MOUNTS_ALLOWED;
 			}					
 					
