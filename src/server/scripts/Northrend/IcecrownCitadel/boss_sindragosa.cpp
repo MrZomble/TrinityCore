@@ -277,6 +277,7 @@ class boss_sindragosa : public CreatureScript
                         me->SetHomePosition(SindragosaLandPos);
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         me->SetSpeed(MOVE_FLIGHT, 2.0f);
+						me->SetReactState(REACT_AGGRESSIVE);
 
                         // Sindragosa enters combat as soon as she lands
                         DoZoneInCombat();
