@@ -271,13 +271,13 @@ class boss_sindragosa : public CreatureScript
                 switch (point)
                 {
                     case POINT_FROSTWYRM_LAND:
-                        me->setActive(false);
+                        //me->setActive(false);
                         me->SetFlying(false);
                         me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
                         me->SetHomePosition(SindragosaLandPos);
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         me->SetSpeed(MOVE_FLIGHT, 2.0f);
-						me->SetReactState(REACT_AGGRESSIVE);
+						//me->SetReactState(REACT_AGGRESSIVE);
 
                         // Sindragosa enters combat as soon as she lands
                         DoZoneInCombat();
@@ -1447,9 +1447,9 @@ class at_sindragosa_lair : public AreaTriggerScript
                     if (player->GetMap()->IsHeroic() && !instance->GetData(DATA_HEROIC_ATTEMPTS))
                         return true;
 
-                    player->GetMap()->LoadGrid(SindragosaSpawnPos.GetPositionX(), SindragosaSpawnPos.GetPositionY());
-                    if (Creature* sindragosa = player->GetMap()->SummonCreature(NPC_SINDRAGOSA, SindragosaSpawnPos))
-                        sindragosa->AI()->DoAction(ACTION_START_FROSTWYRM);
+                    //player->GetMap()->LoadGrid(SindragosaSpawnPos.GetPositionX(), SindragosaSpawnPos.GetPositionY());
+                    //if (Creature* sindragosa = player->GetMap()->SummonCreature(NPC_SINDRAGOSA, SindragosaSpawnPos))
+                    //    sindragosa->AI()->DoAction(ACTION_START_FROSTWYRM);
                 }
             }
 
