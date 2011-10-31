@@ -211,12 +211,12 @@ class boss_sindragosa : public CreatureScript
 
             void EnterCombat(Unit* victim)
             {
-                if (!instance->CheckRequiredBosses(DATA_SINDRAGOSA, victim->ToPlayer()))
-                {
-                    EnterEvadeMode();
-                    instance->DoCastSpellOnPlayers(LIGHT_S_HAMMER_TELEPORT);
-                    return;
-                }
+                //if (!instance->CheckRequiredBosses(DATA_SINDRAGOSA, victim->ToPlayer()))
+                //{
+                //    EnterEvadeMode();
+                //    instance->DoCastSpellOnPlayers(LIGHT_S_HAMMER_TELEPORT);
+                //    return;
+                //}
 
                 BossAI::EnterCombat(victim);
                 DoCast(me, SPELL_FROST_AURA);
@@ -1183,7 +1183,7 @@ class FrostBombTargetSelector
                 return true;
 
             for (std::list<Creature*>::const_iterator itr = _collisionList.begin(); itr != _collisionList.end(); ++itr)
-                if ((*itr)->IsInBetween(_caster, unit))
+                if ((*itr)->IsInBetween(_caster, unit 2.0f))
                     return true;
 
             return false;
