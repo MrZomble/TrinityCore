@@ -148,7 +148,7 @@ Position const RimefangFlyPos      = {4413.309f, 2456.421f, 233.3795f, 2.890186f
 Position const RimefangLandPos     = {4413.309f, 2456.421f, 203.3848f, 2.890186f};
 Position const SpinestalkerFlyPos  = {4418.895f, 2514.233f, 230.4864f, 3.396045f};
 Position const SpinestalkerLandPos = {4418.895f, 2514.233f, 203.3848f, 3.396045f};
-Position const SindragosaSpawnPos  = {4818.700f, 2483.710f, 287.0650f, 3.089233f};
+Position const SindragosaSpawnPos  = {4488.700f, 2483.710f, 287.0650f, 3.089233f};
 Position const SindragosaFlyPos    = {4475.190f, 2484.570f, 234.8510f, 3.141593f};
 Position const SindragosaLandPos   = {4419.190f, 2484.570f, 203.3848f, 3.141593f};
 Position const SindragosaAirPos    = {4475.990f, 2484.430f, 247.9340f, 3.141593f};
@@ -211,12 +211,12 @@ class boss_sindragosa : public CreatureScript
 
             void EnterCombat(Unit* victim)
             {
-                //if (!instance->CheckRequiredBosses(DATA_SINDRAGOSA, victim->ToPlayer()))
-                //{
-                //    EnterEvadeMode();
-                //    instance->DoCastSpellOnPlayers(LIGHT_S_HAMMER_TELEPORT);
-                //    return;
-                //}
+                if (!instance->CheckRequiredBosses(DATA_SINDRAGOSA, victim->ToPlayer()))
+                {
+                    EnterEvadeMode();
+                    instance->DoCastSpellOnPlayers(LIGHT_S_HAMMER_TELEPORT);
+                    return;
+                }
 
                 BossAI::EnterCombat(victim);
                 DoCast(me, SPELL_FROST_AURA);
@@ -1434,16 +1434,16 @@ class at_sindragosa_lair : public AreaTriggerScript
         {
             if (InstanceScript* instance = player->GetInstanceScript())
             {
-                //if (!instance->GetData(DATA_SPINESTALKER))
-                //    if (Creature* spinestalker = ObjectAccessor::GetCreature(*player, instance->GetData64(DATA_SPINESTALKER)))
-                //        spinestalker->AI()->DoAction(ACTION_START_FROSTWYRM);
+                if (!instance->GetData(DATA_SPINESTALKER))
+                   if (Creature* spinestalker = ObjectAccessor::GetCreature(*player, instance->GetData64(DATA_SPINESTALKER)))
+                        spinestalker->AI()->DoAction(ACTION_START_FROSTWYRM);
 
-                //if (!instance->GetData(DATA_RIMEFANG))
-                //    if (Creature* rimefang = ObjectAccessor::GetCreature(*player, instance->GetData64(DATA_RIMEFANG)))
-                //        rimefang->AI()->DoAction(ACTION_START_FROSTWYRM);
+                if (!instance->GetData(DATA_RIMEFANG))
+                    if (Creature* rimefang = ObjectAccessor::GetCreature(*player, instance->GetData64(DATA_RIMEFANG)))
+                        rimefang->AI()->DoAction(ACTION_START_FROSTWYRM);
 
-                //if (!instance->GetData(DATA_SINDRAGOSA_FROSTWYRMS) && instance->GetBossState(DATA_SINDRAGOSA) != DONE)
-                //{
+                if (!instance->GetData(DATA_SINDRAGOSA_FROSTWYRMS) && instance->GetBossState(DATA_SINDRAGOSA) != DONE)
+                {
                     if (player->GetMap()->IsHeroic() && !instance->GetData(DATA_HEROIC_ATTEMPTS))
                         return true;
 
