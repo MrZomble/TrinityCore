@@ -467,7 +467,7 @@ struct boss_jormungarAI : public ScriptedAI
                 case 0:
                     break;
                 case 4:
-                    stage = 5;
+                    stage = 7;
                     submergeTimer = 5*IN_MILLISECONDS;
                     break;
                 default:
