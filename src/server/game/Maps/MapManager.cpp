@@ -241,19 +241,19 @@ bool MapManager::CanPlayerEnter(uint32 mapid, Player* player, bool loginCheck)
     }
 
     // players are only allowed to enter 5 instances per hour
-    if (entry->IsDungeon() && (!player->GetGroup() || (player->GetGroup() && !player->GetGroup()->isLFGGroup())))
-    {
-        uint32 instaceIdToCheck = 0;
-        if (InstanceSave* save = player->GetInstanceSave(mapid, entry->IsRaid()))
-            instaceIdToCheck = save->GetInstanceId();
+    // if (entry->IsDungeon() && (!player->GetGroup() || (player->GetGroup() && !player->GetGroup()->isLFGGroup())))
+    // {
+        // uint32 instaceIdToCheck = 0;
+        // if (InstanceSave* save = player->GetInstanceSave(mapid, entry->IsRaid()))
+            // instaceIdToCheck = save->GetInstanceId();
 
-        // instanceId can never be 0 - will not be found
-        if (!player->CheckInstanceCount(instaceIdToCheck))
-        {
-            player->SendTransferAborted(mapid, TRANSFER_ABORT_TOO_MANY_INSTANCES);
-            return false;
-        }
-    }
+        //instanceId can never be 0 - will not be found
+        // if (!player->CheckInstanceCount(instaceIdToCheck))
+        // {
+            // player->SendTransferAborted(mapid, TRANSFER_ABORT_TOO_MANY_INSTANCES);
+            // return false;
+        // }
+    // }
 
     //Other requirements
     return player->Satisfy(sObjectMgr->GetAccessRequirement(mapid, targetDifficulty), mapid, true);
