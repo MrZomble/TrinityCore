@@ -32,6 +32,7 @@
 #include "SmartAI.h"
 #include "Group.h"
 #include "Vehicle.h"
+#include "ScriptedGossip.h"
 
 SmartScript::SmartScript()
 {
@@ -139,6 +140,7 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
 
             ObjectList* targets = GetTargets(e, unit);
             Creature* talker = me;
+            Player* targetPlayer = NULL;
             if (targets)
             {
                 for (ObjectList::const_iterator itr = targets->begin(); itr != targets->end(); ++itr)
@@ -148,14 +150,26 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
                         talker = (*itr)->ToCreature();
                         break;
                     }
+                    else if (IsPlayer((*itr)))
+                    {
+                        targetPlayer = (*itr)->ToPlayer();
+                        break;
+                    }
                 }
 
                 delete targets;
             }
+
             mTalkerEntry = talker->GetEntry();
             mLastTextID = e.action.talk.textGroupID;
             mTextTimer = e.action.talk.duration;
-            mTextGUID = IsPlayer(GetLastInvoker()) ? GetLastInvoker()->GetGUID() : 0;//invoker, used for $vars in texts
+            if (IsPlayer(GetLastInvoker())) // used for $vars in texts and whisper target
+                mTextGUID = GetLastInvoker()->GetGUID();
+            else if (targetPlayer)
+                mTextGUID = targetPlayer->GetGUID();
+            else
+                mTextGUID = 0;
+
             mUseTextTimer = true;
             sCreatureTextMgr->SendChat(talker, uint8(e.action.talk.textGroupID), mTextGUID);
             sLog->outDebug(LOG_FILTER_DATABASE_AI, "SmartScript::ProcessAction: SMART_ACTION_TALK: talker: %s (GuidLow: %u), textGuid: %u",
@@ -1323,7 +1337,7 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
                 if (IsCreature(*itr))
                     (*itr)->ToCreature()->Respawn();
                 else if (IsGameObject(*itr))
-                    (*itr)->ToGameObject()->SetRespawnTime(e.action.RespawnTarget.GoRespawnTime);
+                    (*itr)->ToGameObject()->SetRespawnTime(e.action.RespawnTarget.goRespawnTime);
             }
 
             delete targets;
@@ -1458,28 +1472,6 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
         case SMART_ACTION_CALL_SCRIPT_RESET:
             OnReset();
             break;
-        case SMART_ACTION_ENTER_VEHICLE:
-        {
-            if (!me)
-                return;
-
-            ObjectList* targets = GetTargets(e, unit);
-            if (!targets)
-                return;
-
-            for (ObjectList::iterator itr = targets->begin(); itr != targets->end(); ++itr)
-            {
-                if (IsUnit(*itr) && (*itr)->ToUnit()->GetVehicleKit())
-                {
-                    me->EnterVehicle((*itr)->ToUnit(), e.action.enterVehicle.seat);
-                    delete targets;
-                    return;
-                }
-            }
-
-            delete targets;
-            break;
-        }
         case SMART_ACTION_CALL_TIMED_ACTIONLIST:
         {
             if (e.GetTargetType() == SMART_TARGET_NONE)
@@ -1781,7 +1773,38 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
         }
         case SMART_ACTION_JUMP_TO_POS:
         {
+            if (!me)
+                return;
+
+            me->GetMotionMaster()->Clear();
             me->GetMotionMaster()->MoveJump(e.target.x, e.target.y, e.target.z, (float)e.action.jump.speedxy, (float)e.action.jump.speedz);
+            // TODO: Resume path when reached jump location
+            break;
+        }
+        case SMART_ACTION_SEND_GOSSIP_MENU:
+        {
+            if (!GetBaseObject())
+                return;
+
+            sLog->outDebug(LOG_FILTER_DATABASE_AI, "SmartScript::ProcessAction:: SMART_ACTION_SEND_GOSSIP_MENU: gossipMenuId %d, gossip_option_id %d",
+                e.action.sendGossipMenu.gossipMenuId, e.action.sendGossipMenu.gossipOptionId);
+
+            ObjectList* targets = GetTargets(e, unit);
+            if (!targets)
+                return;
+
+            for (ObjectList::const_iterator itr = targets->begin(); itr != targets->end(); ++itr)
+                if (Player* player = (*itr)->ToPlayer())
+                {
+                    if (e.action.sendGossipMenu.gossipMenuId)
+                        player->PrepareGossipMenu(GetBaseObject(), e.action.sendGossipMenu.gossipMenuId, true);
+                    else
+                        player->PlayerTalkClass->ClearMenus();
+
+                    player->SEND_GOSSIP_MENU(e.action.sendGossipMenu.gossipOptionId, GetBaseObject()->GetGUID());
+                }
+
+            delete targets;
             break;
         }
         default:
@@ -2120,6 +2143,16 @@ ObjectList* SmartScript::GetTargets(SmartScriptHolder const& e, Unit* invoker /*
             GameObject* target = GetClosestGameObjectWithEntry(GetBaseObject(), e.target.closest.entry, (float)(e.target.closest.dist ? e.target.closest.dist : 100));
             if (target)
                 l->push_back(target);
+            break;
+        }
+        case SMART_TARGET_CLOSEST_PLAYER:
+        {
+            if (me)
+            {
+                Player* target = me->SelectNearestPlayer((float)e.target.playerDistance.dist);
+                if (target)
+                    l->push_back(target);
+            }
             break;
         }
         case SMART_TARGET_OWNER_OR_SUMMONER:
@@ -2608,6 +2641,19 @@ void SmartScript::UpdateTimer(SmartScriptHolder& e, uint32 const diff)
 
     if (e.timer < diff)
     {
+        // delay spell cast event if another spell is being casted
+        if (e.GetActionType() == SMART_ACTION_CAST)
+        {
+            if (!(e.action.cast.flags & SMARTCAST_INTERRUPT_PREVIOUS))
+            {
+                if (me && me->HasUnitState(UNIT_STAT_CASTING))
+                {
+                    e.timer = 1;
+                    return;
+                }
+            }
+        }
+
         e.active = true;//activate events with cooldown
         switch (e.GetEventType())//process ONLY timed events
         {
