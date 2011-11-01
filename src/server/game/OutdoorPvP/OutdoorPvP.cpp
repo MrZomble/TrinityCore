@@ -497,6 +497,7 @@ bool OutdoorPvP::HandleOpenGo(Player* plr, uint64 guid)
 {
     for (OPvPCapturePointMap::iterator itr = m_capturePoints.begin(); itr != m_capturePoints.end(); ++itr)
         if (itr->second->HandleOpenGo(plr, guid) >= 0)
+			sLog->outString("OutdoorPVP: Player %u using %u.", plr, guid);
             return true;
 
     return false;

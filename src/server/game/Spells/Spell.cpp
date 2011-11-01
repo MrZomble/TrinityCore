@@ -5371,6 +5371,11 @@ SpellCastResult Spell::CheckCast(bool strict)
                 break;
             }
             case SPELL_AURA_FLY:
+			//{
+				//if (m_originalCaster->GetAreaID() == 3483)
+					//return SPELL_FAILED_NO_MOUNTS_ALLOWED;
+			//}					
+					
             case SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED:
             {
                 // not allow cast fly spells if not have req. skills  (all spells is self target)

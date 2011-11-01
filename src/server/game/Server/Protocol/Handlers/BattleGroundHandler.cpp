@@ -32,6 +32,10 @@
 #include "Player.h"
 #include "Object.h"
 #include "Opcodes.h"
+#include "OutdoorPvP.h"
+#include "OutdoorPvPMgr.h"
+#include "../../../../scripts/OutdoorPvP/OutdoorPvPHS.h"
+#include "../../../../scripts/OutdoorPvP/OutdoorPvPHP.h"
 #include "DisableMgr.h"
 #include "Group.h"
 
@@ -582,6 +586,21 @@ void WorldSession::HandleAreaSpiritHealerQueryOpcode(WorldPacket & recv_data)
 
     if (bg)
         sBattlegroundMgr->SendAreaSpiritHealerQueryOpcode(_player, bg, guid);
+	else
+    {
+        if ( GetPlayer()->GetZoneId() == 267 )
+        {
+            OutdoorPvPHS *pvpHS = (OutdoorPvPHS*)sOutdoorPvPMgr->GetOutdoorPvPToZoneId( 267 );
+            if (pvpHS)
+                pvpHS->SendAreaSpiritHealerQueryOpcode(_player, guid);
+        }
+		if ( GetPlayer()->GetZoneId() == 3483 )
+        {
+            OutdoorPvPHP *pvpHP = (OutdoorPvPHP*)sOutdoorPvPMgr->GetOutdoorPvPToZoneId( 3483 );
+            if (pvpHP)
+                pvpHP->SendAreaSpiritHealerQueryOpcode(_player, guid);
+        }
+    }
 }
 
 void WorldSession::HandleAreaSpiritHealerQueueOpcode(WorldPacket & recv_data)
@@ -602,6 +621,23 @@ void WorldSession::HandleAreaSpiritHealerQueueOpcode(WorldPacket & recv_data)
 
     if (bg)
         bg->AddPlayerToResurrectQueue(guid, _player->GetGUID());
+	else
+    {
+        if ( GetPlayer()->GetZoneId() == 267 )
+        {
+            OutdoorPvPHS *pvpHS = (OutdoorPvPHS*)sOutdoorPvPMgr->GetOutdoorPvPToZoneId( 267 );
+            if (pvpHS)
+                pvpHS->AddPlayerToResurrectQueue( guid, _player->GetGUID() );
+        }
+		
+		if ( GetPlayer()->GetZoneId() == 3483 )
+        {
+            OutdoorPvPHP *pvpHP = (OutdoorPvPHP*)sOutdoorPvPMgr->GetOutdoorPvPToZoneId( 3483 );
+            if (pvpHP)
+                pvpHP->AddPlayerToResurrectQueue( guid, _player->GetGUID() );
+        }
+	}
+
 }
 
 void WorldSession::HandleBattlemasterJoinArena(WorldPacket & recv_data)

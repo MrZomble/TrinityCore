@@ -108,6 +108,7 @@ void OutdoorPvPMgr::InitOutdoorPvP()
 
     sLog->outString(">> Loaded %u outdoor PvP definitions in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
     sLog->outString();
+	
 }
 
 void OutdoorPvPMgr::AddZone(uint32 zoneid, OutdoorPvP* handle)
@@ -176,7 +177,7 @@ bool OutdoorPvPMgr::HandleCustomSpell(Player* plr, uint32 spellId, GameObject* g
 
 ZoneScript* OutdoorPvPMgr::GetZoneScript(uint32 zoneId)
 {
-    OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(zoneId);
+	OutdoorPvPMap::iterator itr = m_OutdoorPvPMap.find(zoneId);
     if (itr != m_OutdoorPvPMap.end())
         return itr->second;
     else
@@ -188,6 +189,7 @@ bool OutdoorPvPMgr::HandleOpenGo(Player* plr, uint64 guid)
     for (OutdoorPvPSet::iterator itr = m_OutdoorPvPSet.begin(); itr != m_OutdoorPvPSet.end(); ++itr)
     {
         if ((*itr)->HandleOpenGo(plr, guid))
+		    sLog->outString("OutdoorPVPMgr: Player %u using %u.", plr, guid);
             return true;
     }
     return false;

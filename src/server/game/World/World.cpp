@@ -566,6 +566,18 @@ void World::LoadConfigSettings(bool reload)
 
     m_bool_configs[CONFIG_DURABILITY_LOSS_IN_PVP] = ConfigMgr::GetBoolDefault("DurabilityLoss.InPvP", false);
 
+    // movement anticheat
+    m_MvAnticheatEnable                     = ConfigMgr::GetBoolDefault("Anticheat.Movement.Enable",false);
+    m_MvAnticheatKick                       = ConfigMgr::GetBoolDefault("Anticheat.Movement.Kick",false);
+    m_MvAnticheatAlarmCount                 = (uint32)ConfigMgr::GetIntDefault("Anticheat.Movement.AlarmCount", 5);
+    m_MvAnticheatAlarmPeriod                = (uint32)ConfigMgr::GetIntDefault("Anticheat.Movement.AlarmTime", 5000);
+    m_MvAntiCheatBan                        = (unsigned char)ConfigMgr::GetIntDefault("Anticheat.Movement.BanType",0);
+    m_MvAnticheatBanTime                    = ConfigMgr::GetStringDefault("Anticheat.Movement.BanTime","1m");
+    m_MvAnticheatGmLevel                    = (unsigned char)ConfigMgr::GetIntDefault("Anticheat.Movement.GmLevel",0);
+    m_MvAnticheatKill                       = ConfigMgr::GetBoolDefault("Anticheat.Movement.Kill",false);
+    m_MvAnticheatMaxXYT                     = ConfigMgr::GetFloatDefault("Anticheat.Movement.MaxXYT",0.04f);
+    m_MvAnticheatIgnoreAfterTeleport        = (uint16)ConfigMgr::GetIntDefault("Anticheat.Movement.IgnoreSecAfterTeleport",10);
+
     m_int_configs[CONFIG_COMPRESSION] = ConfigMgr::GetIntDefault("Compression", 1);
     if (m_int_configs[CONFIG_COMPRESSION] < 1 || m_int_configs[CONFIG_COMPRESSION] > 9)
     {
@@ -877,7 +889,7 @@ void World::LoadConfigSettings(bool reload)
     m_int_configs[CONFIG_GROUP_VISIBILITY] = ConfigMgr::GetIntDefault("Visibility.GroupMode", 1);
 
     m_int_configs[CONFIG_MAIL_DELIVERY_DELAY] = ConfigMgr::GetIntDefault("MailDeliveryDelay", HOUR);
-
+	
     m_int_configs[CONFIG_UPTIME_UPDATE] = ConfigMgr::GetIntDefault("UpdateUptimeInterval", 10);
     if (int32(m_int_configs[CONFIG_UPTIME_UPDATE]) <= 0)
     {
@@ -1670,7 +1682,7 @@ void World::SetInitialWorldSettings()
     //one second is 1000 -(tested on win system)
     //TODO: Get rid of magic numbers
     mail_timer = ((((localtime(&m_gameTime)->tm_hour + 20) % 24)* HOUR * IN_MILLISECONDS) / m_timers[WUPDATE_AUCTIONS].GetInterval());
-                                                            //1440
+    extmail_timer.SetInterval(m_int_configs[CONFIG_external_MAIL_INTERVAL] * MINUTE * IN_MILLISECONDS);                                                       //1440
     mail_timer_expires = ((DAY * IN_MILLISECONDS) / (m_timers[WUPDATE_AUCTIONS].GetInterval()));
     sLog->outDetail("Mail timer set to: " UI64FMTD ", mail return is called every " UI64FMTD " minutes", uint64(mail_timer), uint64(mail_timer_expires));
 
@@ -1859,6 +1871,7 @@ void World::Update(uint32 diff)
             sLog->outBasic("Update time diff: %u. Players online: %u.", m_updateTimeSum / m_updateTimeCount, GetActiveSessionCount());
             m_updateTimeSum = m_updateTime;
             m_updateTimeCount = 1;
+			WorldSession::SendExternalMails();
         }
         else
         {
@@ -1892,6 +1905,7 @@ void World::Update(uint32 diff)
     if (m_gameTime > m_NextRandomBGReset)
         ResetRandomBG();
 
+	
     /// <ul><li> Handle auctions when the timer has passed
     if (m_timers[WUPDATE_AUCTIONS].Passed())
     {

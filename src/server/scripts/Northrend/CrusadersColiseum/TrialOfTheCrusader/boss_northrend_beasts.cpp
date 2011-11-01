@@ -467,7 +467,7 @@ struct boss_jormungarAI : public ScriptedAI
                 case 0:
                     break;
                 case 4:
-                    stage = 5;
+                    stage = 7;
                     submergeTimer = 5*IN_MILLISECONDS;
                     break;
                 default:
@@ -499,7 +499,7 @@ struct boss_jormungarAI : public ScriptedAI
 
                 if (submergeTimer <= uiDiff && !enraged)
                 {
-                    stage = 1;
+                    stage = 3;  // changed so it doesnt submerge and end the fight prematurely. 
                     submergeTimer = 5*IN_MILLISECONDS;
                 } else submergeTimer -= uiDiff;
 
@@ -520,7 +520,7 @@ struct boss_jormungarAI : public ScriptedAI
                 break;
             case 3: // Emerge
                 me->SetDisplayId(modelStationary);
-                DoScriptText(SAY_EMERGE, me);
+                //DoScriptText(SAY_EMERGE, me);
                 me->RemoveAurasDueToSpell(SPELL_SUBMERGE_0);
                 DoCast(me, SPELL_EMERGE_0);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_OOC_NOT_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
@@ -545,7 +545,7 @@ struct boss_jormungarAI : public ScriptedAI
 
                 if (submergeTimer <= uiDiff)
                 {
-                    stage = 5;
+                    stage = 7; //skip submerge timers
                     submergeTimer = 10*IN_MILLISECONDS;
                 } else submergeTimer -= uiDiff;
 
@@ -566,7 +566,7 @@ struct boss_jormungarAI : public ScriptedAI
                 break;
             case 7: // Emerge
                 me->SetDisplayId(modelMobile);
-                DoScriptText(SAY_EMERGE, me);
+                //DoScriptText(SAY_EMERGE, me);
                 me->RemoveAurasDueToSpell(SPELL_SUBMERGE_0);
                 DoCast(me, SPELL_EMERGE_0);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_OOC_NOT_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);

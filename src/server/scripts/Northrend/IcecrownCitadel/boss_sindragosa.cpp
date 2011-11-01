@@ -148,7 +148,7 @@ Position const RimefangFlyPos      = {4413.309f, 2456.421f, 233.3795f, 2.890186f
 Position const RimefangLandPos     = {4413.309f, 2456.421f, 203.3848f, 2.890186f};
 Position const SpinestalkerFlyPos  = {4418.895f, 2514.233f, 230.4864f, 3.396045f};
 Position const SpinestalkerLandPos = {4418.895f, 2514.233f, 203.3848f, 3.396045f};
-Position const SindragosaSpawnPos  = {4818.700f, 2483.710f, 287.0650f, 3.089233f};
+Position const SindragosaSpawnPos  = {4488.700f, 2483.710f, 287.0650f, 3.089233f};
 Position const SindragosaFlyPos    = {4475.190f, 2484.570f, 234.8510f, 3.141593f};
 Position const SindragosaLandPos   = {4419.190f, 2484.570f, 203.3848f, 3.141593f};
 Position const SindragosaAirPos    = {4475.990f, 2484.430f, 247.9340f, 3.141593f};
@@ -271,12 +271,13 @@ class boss_sindragosa : public CreatureScript
                 switch (point)
                 {
                     case POINT_FROSTWYRM_LAND:
-                        me->setActive(false);
+                        //me->setActive(false);
                         me->SetFlying(false);
                         me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
                         me->SetHomePosition(SindragosaLandPos);
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         me->SetSpeed(MOVE_FLIGHT, 2.0f);
+						//me->SetReactState(REACT_AGGRESSIVE);
 
                         // Sindragosa enters combat as soon as she lands
                         DoZoneInCombat();
@@ -1183,7 +1184,7 @@ class FrostBombTargetSelector
                 return true;
 
             for (std::list<Creature*>::const_iterator itr = _collisionList.begin(); itr != _collisionList.end(); ++itr)
-                if ((*itr)->IsInBetween(_caster, unit))
+                if ((*itr)->IsInBetween(_caster, unit, 2.0f))
                     return true;
 
             return false;
@@ -1434,7 +1435,7 @@ class at_sindragosa_lair : public AreaTriggerScript
             if (InstanceScript* instance = player->GetInstanceScript())
             {
                 if (!instance->GetData(DATA_SPINESTALKER))
-                    if (Creature* spinestalker = ObjectAccessor::GetCreature(*player, instance->GetData64(DATA_SPINESTALKER)))
+                   if (Creature* spinestalker = ObjectAccessor::GetCreature(*player, instance->GetData64(DATA_SPINESTALKER)))
                         spinestalker->AI()->DoAction(ACTION_START_FROSTWYRM);
 
                 if (!instance->GetData(DATA_RIMEFANG))
@@ -1446,9 +1447,9 @@ class at_sindragosa_lair : public AreaTriggerScript
                     if (player->GetMap()->IsHeroic() && !instance->GetData(DATA_HEROIC_ATTEMPTS))
                         return true;
 
-                    player->GetMap()->LoadGrid(SindragosaSpawnPos.GetPositionX(), SindragosaSpawnPos.GetPositionY());
-                    if (Creature* sindragosa = player->GetMap()->SummonCreature(NPC_SINDRAGOSA, SindragosaSpawnPos))
-                        sindragosa->AI()->DoAction(ACTION_START_FROSTWYRM);
+                    //player->GetMap()->LoadGrid(SindragosaSpawnPos.GetPositionX(), SindragosaSpawnPos.GetPositionY());
+                    //if (Creature* sindragosa = player->GetMap()->SummonCreature(NPC_SINDRAGOSA, SindragosaSpawnPos))
+                    //    sindragosa->AI()->DoAction(ACTION_START_FROSTWYRM);
                 }
             }
 
