@@ -72,6 +72,9 @@ public:
             DoScriptText(SAY_AGGRO, me);
             if (instance)
                 instance->SetData(DATA_MARWYN_EVENT, IN_PROGRESS);
+			    
+			me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE|UNIT_FLAG_NOT_SELECTABLE);
+            me->SetReactState(REACT_AGGRESSIVE);
 
             events.ScheduleEvent(EVENT_OBLITERATE, 30000);          // TODO Check timer
             events.ScheduleEvent(EVENT_WELL_OF_CORRUPTION, 13000);

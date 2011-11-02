@@ -140,7 +140,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
 	
     //if( m_ChestGUID == 0 )
     //{ 
-    /*    if( m_ChestTimer < diff )
+        if( m_ChestTimer < diff )
         {
             uint32 ffachest = 0;
             ffachest = urand(0, 9);
@@ -173,7 +173,7 @@ bool OutdoorPvPHS::Update(uint32 diff)
             }
             else
                 m_ChestAnnounceTimer -= diff;
-        } */
+        } 
     //} 
     // Chest debug. 
     if( m_ChestTimer < diff )

@@ -183,7 +183,7 @@ struct boss_twin_baseAI : public ScriptedAI
         m_uiSpecialAbilityTimer = MINUTE*IN_MILLISECONDS;
         m_uiSpikeTimer = 20*IN_MILLISECONDS;
         m_uiTouchTimer = urand(10, 15)*IN_MILLISECONDS;
-        m_uiBerserkTimer = IsHeroic() ? 6*MINUTE*IN_MILLISECONDS : 10*MINUTE*IN_MILLISECONDS;
+        m_uiBerserkTimer = IsHeroic() ? 10*MINUTE*IN_MILLISECONDS : 15*MINUTE*IN_MILLISECONDS;
 
         Summons.DespawnAll();
     }
