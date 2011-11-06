@@ -222,6 +222,7 @@ class boss_sindragosa : public CreatureScript
                 DoCast(me, SPELL_FROST_AURA);
                 DoCast(me, SPELL_PERMAEATING_CHILL);
                 Talk(SAY_AGGRO);
+				DoZoneInCombat();
             }
 
             void JustReachedHome()
@@ -247,12 +248,12 @@ class boss_sindragosa : public CreatureScript
                         return;
 
                     me->setActive(true);
-                    me->SetSpeed(MOVE_FLIGHT, 4.0f);
-                    me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                    float moveTime = me->GetExactDist(&SindragosaFlyPos) / (me->GetSpeed(MOVE_FLIGHT) * 0.001f);
-                    me->m_Events.AddEvent(new FrostwyrmLandEvent(*me, SindragosaLandPos), me->m_Events.CalculateTime(uint64(moveTime) + 250));
-                    me->GetMotionMaster()->MovePoint(POINT_FROSTWYRM_FLY_IN, SindragosaFlyPos);
-                    DoCast(me, SPELL_SINDRAGOSA_S_FURY);
+                    //me->SetSpeed(MOVE_FLIGHT, 4.0f);
+                    //me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    //float moveTime = me->GetExactDist(&SindragosaFlyPos) / (me->GetSpeed(MOVE_FLIGHT) * 0.001f);
+                    //me->m_Events.AddEvent(new FrostwyrmLandEvent(*me, SindragosaLandPos), me->m_Events.CalculateTime(uint64(moveTime) + 250));
+                    //me->GetMotionMaster()->MovePoint(POINT_FROSTWYRM_FLY_IN, SindragosaFlyPos);
+                    //DoCast(me, SPELL_SINDRAGOSA_S_FURY);
                 }
             }
 
@@ -280,7 +281,7 @@ class boss_sindragosa : public CreatureScript
 						//me->SetReactState(REACT_AGGRESSIVE);
 
                         // Sindragosa enters combat as soon as she lands
-                        DoZoneInCombat();
+                        //DoZoneInCombat();
                         break;
                     case POINT_TAKEOFF:
                         events.ScheduleEvent(EVENT_AIR_MOVEMENT, 1);
@@ -1447,7 +1448,7 @@ class at_sindragosa_lair : public AreaTriggerScript
                     if (player->GetMap()->IsHeroic() && !instance->GetData(DATA_HEROIC_ATTEMPTS))
                         return true;
 
-                    player->GetMap()->LoadGrid(SindragosaSpawnPos.GetPositionX(), SindragosaSpawnPos.GetPositionY());
+                    player->GetMap()->LoadGrid(SindragosaLandPos.GetPositionX(), SindragosaLandPos.GetPositionY());
                     if (Creature* sindragosa = player->GetMap()->SummonCreature(NPC_SINDRAGOSA, SindragosaSpawnPos))
                         sindragosa->AI()->DoAction(ACTION_START_FROSTWYRM);
                 }
